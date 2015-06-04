@@ -1,0 +1,37 @@
+<idea-plugin version="2">
+  <id>sk.sorien.silex.plugin.id</id>
+  <name>Silex Plugin</name>
+  <version>0.9</version>
+  <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
+
+  <description><![CDATA[]]></description>
+
+  <change-notes><![CDATA[]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="131"/>
+
+  <!-- Mark as compatible w/ all products based on the IntelliJ Platform (IntelliJ IDEA, RubyMine, WebStorm, PhpStorm, PyCharm and AppCode) -->
+  <depends>com.intellij.modules.lang</depends>
+
+  <!-- Dependency on PHP functionality -->
+  <depends>com.jetbrains.php</depends>
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <completion.contributor language="PHP" implementationClass="sk.sorien.silexplugin.pimple.CompletionContributor"/>
+    <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.ContainerPhpTypeProvider"/>
+  </extensions>
+
+  <project-components>
+    <component>
+      <implementation-class>sk.sorien.silexplugin.SilexPluginComponent</implementation-class>
+      <loadForDefaultProject/>
+    </component>
+  </project-components>
+
+  <actions>
+  </actions>
+
+</idea-plugin>
