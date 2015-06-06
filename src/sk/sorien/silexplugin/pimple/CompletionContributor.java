@@ -36,52 +36,22 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    ProcessingContext context,
                                    @NotNull CompletionResultSet resultSet) {
 
-            PsiElement position = parameters.getPosition().getParent();
+            PsiElement element = parameters.getPosition().getParent();
 
-            if(!(position instanceof StringLiteralExpression)) {
+            if (!(element instanceof StringLiteralExpression)) {
                 return;
             }
 
-            position = position.getParent();
-            if (!(position instanceof ArrayIndex)) {
+            if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) element)) {
                 return;
             }
 
-            position = position.getParent();
-            if (!(position instanceof ArrayAccessExpression)) {
-                return;
+            for (Service service : ContainerResolver.getServices(element.getProject()).values()){
+                resultSet.addElement(new ServiceLookupElement(service));
             }
 
-            Variable[] variables = PsiTreeUtil.getChildrenOfType(position, Variable.class);
-            if (variables == null || variables.length != 1) {
-                return;
-            }
-
-            Variable variable = variables[0];
-
-            // skip simple \array
-            if (variable.getSignature().equals("#C\\array")) {
-                return;
-            }
-
-            PhpIndex phpIndex = PhpIndex.getInstance(variable.getProject());
-
-            Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-            if(classElementCollections.size() == 0) {
-                return;
-            }
-
-            PhpNamedElement phpNamedElement = classElementCollections.iterator().next();
-            if (!(phpNamedElement instanceof PhpClass) || !Utils.extendsPimpleContainerClass((PhpClass) phpNamedElement)) {
-                return;
-            }
-
-            for (Service element : ContainerResolver.getServices(variable.getProject()).values()){
-                resultSet.addElement(new ServiceLookupElement(element));
-            }
-
-            for (Parameter element : ContainerResolver.getParameters(variable.getProject()).values()){
-                resultSet.addElement(new ParameterLookupElement(element));
+            for (Parameter parameter : ContainerResolver.getParameters(element.getProject()).values()){
+                resultSet.addElement(new ParameterLookupElement(parameter));
             }
         }
     }
@@ -168,56 +138,15 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            PsiElement parameterList = position.getParent();
-            if (!(parameterList instanceof ParameterList)) {
+            if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) position, "extend", 0)) {
                 return;
             }
 
-            PsiElement[] params = ((ParameterList)parameterList).getParameters();
-            if (params.length == 0 || !params[0].isEquivalentTo(position)) {
-                return;
-            }
-
-            PsiElement methodReference = parameterList.getParent();
-            if(!(methodReference instanceof MethodReference)) {
-                return;
-            }
-
-            // we have extend method
-            String methodName = ((MethodReference) methodReference).getName();
-            if ((methodName == null ) || (!methodName.equals("extend"))) {
-                return;
-            }
-
-            Variable[] variables = PsiTreeUtil.getChildrenOfType(methodReference, Variable.class);
-            if (variables == null || variables.length != 1) {
-                return;
-            }
-
-            Variable variable = variables[0];
-
-            // skip simple \array
-            if (variable.getSignature().equals("#C\\array")) {
-                return;
-            }
-
-            PhpIndex phpIndex = PhpIndex.getInstance(variable.getProject());
-
-            Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-            if(classElementCollections.size() == 0) {
-                return;
-            }
-
-            PhpNamedElement phpNamedElement = classElementCollections.iterator().next();
-            if (!(phpNamedElement instanceof PhpClass) || !Utils.extendsPimpleContainerClass((PhpClass) phpNamedElement)) {
-                return;
-            }
-
-            for (Service element : ContainerResolver.getServices(variable.getProject()).values()){
+            for (Service element : ContainerResolver.getServices(position.getProject()).values()){
                 resultSet.addElement(new ServiceLookupElement(element));
             }
 
-            for (Parameter element : ContainerResolver.getParameters(variable.getProject()).values()){
+            for (Parameter element : ContainerResolver.getParameters(position.getProject()).values()){
                 resultSet.addElement(new ParameterLookupElement(element));
             }
         }
