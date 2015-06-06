@@ -1,16 +1,20 @@
 <idea-plugin version="2" url="https://github.com/Sorien/silex-idea-plugin">
   <id>sk.sorien.silex.plugin.id</id>
   <name>Silex Plugin</name>
-  <version>0.9</version>
+  <version>0.9.1</version>
   <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
 
   <description><![CDATA[
     <h2>Support for Silex PHP Framework.</h2>
-    <p>Beta release</p>
+    <p>Beta release.</p>
   ]]></description>
 
-  <change-notes><![CDATA[]]>
-  </change-notes>
+  <change-notes><![CDATA[
+    <h2>0.9.1</h2>
+    <ul>
+      <li>Service References</li>
+    </ul>
+  ]]></change-notes>
 
   <idea-version since-build="131"/>
 
@@ -21,6 +25,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="PHP" implementationClass="sk.sorien.silexplugin.pimple.CompletionContributor"/>
+    <psi.referenceContributor implementation="sk.sorien.silexplugin.pimple.ServiceReferenceContributor"/>
     <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.ContainerPhpTypeProvider"/>
   </extensions>
 
