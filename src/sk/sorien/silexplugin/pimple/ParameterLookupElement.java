@@ -5,11 +5,11 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexIcons;
 
-public class ContainerParameterLookupElement extends LookupElement {
+public class ParameterLookupElement extends LookupElement {
 
-    private final ContainerParameter parameter;
-    public ContainerParameterLookupElement(ContainerParameter containerParameter) {
-        parameter = containerParameter;
+    private final Parameter parameter;
+    public ParameterLookupElement(Parameter parameter) {
+        this.parameter = parameter;
     }
 
     @NotNull

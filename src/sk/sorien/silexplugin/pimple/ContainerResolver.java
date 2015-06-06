@@ -30,22 +30,22 @@ public class ContainerResolver {
     }
 
     @Nullable
-    public static ContainerService getService(Project project, String serviceName) {
+    public static Service getService(Project project, String serviceName) {
         return getServices(project).get(serviceName);
     }
 
-    public static Map<String, ContainerService> getServices(Project project) {
+    public static Map<String, Service> getServices(Project project) {
 
         Load(project);
         return container.getServices();
     }
 
     @Nullable
-    public static ContainerParameter getParameter(Project project, String parameterName) {
+    public static Parameter getParameter(Project project, String parameterName) {
         return getParameters(project).get(parameterName);
     }
 
-    public static Map<String, ContainerParameter> getParameters(Project project) {
+    public static Map<String, Parameter> getParameters(Project project) {
 
         Load(project);
         return container.getParameters();

@@ -3,12 +3,12 @@ package sk.sorien.silexplugin.pimple;
 /**
  * @author Stanislav Turza
  */
-public class ContainerService {
+public class Service {
 
     private final String name;
     private final String className;
 
-    public ContainerService(String name, String className) {
+    public Service(String name, String className) {
         this.name = name;
 
         if (!className.startsWith("\\")) {

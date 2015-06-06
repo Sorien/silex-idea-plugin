@@ -42,7 +42,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
             arrayAccessExpression = arrayAccessExpressions[0];
         }
-        // $app['request']->get('')
+        // $app['']->method('')
         else if (e instanceof MethodReference) {
 
             ArrayAccessExpression[] arrayAccessExpressions = PsiTreeUtil.getChildrenOfType(e, ArrayAccessExpression.class);
@@ -54,9 +54,10 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
             String name = ((PhpReference) e).getName();
             if ((name != null) && (!name.isEmpty()))
+                // todo extract constant
                 methodName = 'M'+name;
         }
-        // $app['request']->attributes;
+        // $app['']->property;
         else if (e instanceof FieldReference) {
 
             ArrayAccessExpression[] arrayAccessExpressions = PsiTreeUtil.getChildrenOfType(e, ArrayAccessExpression.class);
@@ -70,6 +71,9 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             if ((name != null) && (!name.isEmpty()))
                 methodName = 'P'+name;
         }
+        // todo add
+        // signature to class reference
+        //$dispatcher2 = new $app['dispatcher_class']();
         else return null;
 
         Variable[] variables = PsiTreeUtil.getChildrenOfType(arrayAccessExpression, Variable.class);
@@ -133,7 +137,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
     public Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element, String methodName) {
 
-        ContainerService service = ContainerResolver.getService(project, element);
+        Service service = ContainerResolver.getService(project, element);
 
         if (service != null) {
 
@@ -144,7 +148,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         }
 
 // resolve basic types - not working
-//        ContainerParameter parameter = ContainerResolver.getParameter(project, element);
+//        Parameter parameter = ContainerResolver.getParameter(project, element);
 //
 //        if (parameter != null) {
 //            return phpIndex.getBySignature("#C"+parameter.getFqn());

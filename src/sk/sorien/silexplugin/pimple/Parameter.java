@@ -3,13 +3,13 @@ package sk.sorien.silexplugin.pimple;
 /**
  * @author Stanislav Turza
  */
-public class ContainerParameter {
+public class Parameter {
 
     private final String name;
     private final String type;
     private final String value;
 
-    public ContainerParameter(String name, String type, String value) {
+    public Parameter(String name, String type, String value) {
         this.name = name;
         this.type = type;
         this.value = value;

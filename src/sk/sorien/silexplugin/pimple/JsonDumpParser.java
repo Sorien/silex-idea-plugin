@@ -31,9 +31,9 @@ public class JsonDumpParser {
                 String value = element.get("value").toString();
 
                 if (type.equals("class")) {
-                    container.addService(new ContainerService(name, value));
+                    container.addService(new Service(name, value));
                 } else {
-                    container.addParameter(new ContainerParameter(name, type, value));
+                    container.addParameter(new Parameter(name, type, value));
                 }
             }
 

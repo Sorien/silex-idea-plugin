@@ -24,11 +24,11 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
 
     public CompletionContributor() {
         // $app['<caret>']
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ArrayAccessCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(StringLiteralExpression.class).withLanguage(PhpLanguage.INSTANCE), new ArrayAccessCompletionProvider());
         // $app['']-><caret>
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new FieldReferenceCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement().afterLeaf("->").withLanguage(PhpLanguage.INSTANCE), new FieldReferenceCompletionProvider());
         // $app[''] = $app->extend('<caret>', ...
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ExtendsMethodParameterListCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement(StringLiteralExpression.class).withLanguage(PhpLanguage.INSTANCE), new ExtendsMethodParameterListCompletionProvider());
     }
 
     private static class ArrayAccessCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -37,10 +37,6 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement position = parameters.getPosition().getParent();
-
-            if(!(position instanceof StringLiteralExpression)) {
-                return;
-            }
 
             position = position.getParent();
             if (!(position instanceof ArrayIndex)) {
@@ -76,12 +72,12 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            for (ContainerService element : ContainerResolver.getServices(variable.getProject()).values()){
-                resultSet.addElement(new ContainerServiceLookupElement(element));
+            for (Service element : ContainerResolver.getServices(variable.getProject()).values()){
+                resultSet.addElement(new ServiceLookupElement(element));
             }
 
-            for (ContainerParameter element : ContainerResolver.getParameters(variable.getProject()).values()){
-                resultSet.addElement(new ContainerParameterLookupElement(element));
+            for (Parameter element : ContainerResolver.getParameters(variable.getProject()).values()){
+                resultSet.addElement(new ParameterLookupElement(element));
             }
         }
     }
@@ -137,7 +133,7 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 }
 
                 // resolve original class name from service definition
-                ContainerService service = ContainerResolver.getService(variable.getProject(), ((StringLiteralExpression) stringLiteralExpression).getContents());
+                Service service = ContainerResolver.getService(variable.getProject(), ((StringLiteralExpression) stringLiteralExpression).getContents());
                 if (service == null) {
                     return;
                 }
@@ -163,10 +159,6 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement position = parameters.getPosition().getParent();
-
-            if(!(position instanceof StringLiteralExpression)) {
-                return;
-            }
 
             PsiElement parameterList = position.getParent();
             if (!(parameterList instanceof ParameterList)) {
@@ -213,12 +205,12 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            for (ContainerService element : ContainerResolver.getServices(variable.getProject()).values()){
-                resultSet.addElement(new ContainerServiceLookupElement(element));
+            for (Service element : ContainerResolver.getServices(variable.getProject()).values()){
+                resultSet.addElement(new ServiceLookupElement(element));
             }
 
-            for (ContainerParameter element : ContainerResolver.getParameters(variable.getProject()).values()){
-                resultSet.addElement(new ContainerParameterLookupElement(element));
+            for (Parameter element : ContainerResolver.getParameters(variable.getProject()).values()){
+                resultSet.addElement(new ParameterLookupElement(element));
             }
         }
     }

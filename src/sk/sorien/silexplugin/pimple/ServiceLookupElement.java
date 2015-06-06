@@ -8,11 +8,11 @@ import sk.sorien.silexplugin.SilexIcons;
 /**
  * @author Stanislav Turza
  */
-public class ContainerServiceLookupElement extends LookupElement {
+public class ServiceLookupElement extends LookupElement {
 
-    private final ContainerService service;
-    public ContainerServiceLookupElement(ContainerService containerService) {
-        service = containerService;
+    private final Service service;
+    public ServiceLookupElement(Service service) {
+        this.service = service;
     }
 
     @NotNull

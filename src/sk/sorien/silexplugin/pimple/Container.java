@@ -9,35 +9,35 @@ import java.util.Map;
  */
 public class Container {
 
-    private Map<String, ContainerService> services;
-    private Map<String, ContainerParameter> parameters;
+    private Map<String, Service> services;
+    private Map<String, Parameter> parameters;
 
     public Container() {
-        services = new HashMap<String, ContainerService>();
-        parameters = new HashMap<String, ContainerParameter>();
+        services = new HashMap<String, Service>();
+        parameters = new HashMap<String, Parameter>();
     }
 
-    public Map<String, ContainerService> getServices() {
+    public Map<String, Service> getServices() {
         return services;
     }
 
-    public void setServices(Map<String, ContainerService> services) {
+    public void setServices(Map<String, Service> services) {
         this.services = services;
     }
 
-    public void addService(ContainerService service) {
+    public void addService(Service service) {
         services.put(service.getName(), service);
     }
 
-    public Map<String, ContainerParameter> getParameters() {
+    public Map<String, Parameter> getParameters() {
         return parameters;
     }
 
-    public void setParameters(Map<String, ContainerParameter> parameters) {
+    public void setParameters(Map<String, Parameter> parameters) {
         this.parameters = parameters;
     }
 
-    public void addParameter(ContainerParameter parameter) {
+    public void addParameter(Parameter parameter) {
         parameters.put(parameter.getName(), parameter);
     }
 }
