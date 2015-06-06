@@ -29,7 +29,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         ArrayAccessExpression arrayAccessExpression;
         String methodName = "";
 
-        if(e instanceof Variable) {
+        if (e instanceof Variable) {
 
             PsiElement parent = e.getParent();
             if (!(parent instanceof AssignmentExpression)) {
@@ -116,12 +116,12 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         PhpIndex phpIndex = PhpIndex.getInstance(project);
 
         Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(classSignature, null, 0);
-        if(classElementCollections.size() == 0) {
+        if (classElementCollections.size() == 0) {
             return Collections.emptySet();
         }
 
         PhpNamedElement phpNamedElement = classElementCollections.iterator().next();
-        if(!(phpNamedElement instanceof PhpClass)) {
+        if (!(phpNamedElement instanceof PhpClass)) {
             return Collections.emptySet();
         }
 
@@ -144,7 +144,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             if (methodName.isEmpty())
                 return phpIndex.getClassesByFQN(service.getClassName());
 
-            return phpIndex.getBySignature("#"+methodName.charAt(0) + "#C"+service.getClassName() + "."+methodName.substring(1));
+            return phpIndex.getBySignature("#" + methodName.charAt(0) + "#C" + service.getClassName() + "." + methodName.substring(1));
         }
 
 // resolve basic types - not working

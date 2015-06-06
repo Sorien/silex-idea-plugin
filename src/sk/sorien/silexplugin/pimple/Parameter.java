@@ -7,8 +7,14 @@ enum ParameterType {
     STRING("string"), INTEGER("int"), BOOLEAN("bool"), FLOAT("float"), ARRAY("array"), CLOSURE("closure"), NULL("null"), UNKNOWN("unknown");
 
     private final String stringValue;
-    ParameterType(final String s) { stringValue = s; }
-    public String toString() { return stringValue; }
+
+    ParameterType(final String s) {
+        stringValue = s;
+    }
+
+    public String toString() {
+        return stringValue;
+    }
 }
 
 public class Parameter {
@@ -31,7 +37,7 @@ public class Parameter {
         return type;
     }
 
-    public String getFqn () {
+    public String getFqn() {
         return "\\" + type.toString();
     }
 

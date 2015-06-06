@@ -8,6 +8,7 @@ import sk.sorien.silexplugin.SilexIcons;
 public class ParameterLookupElement extends LookupElement {
 
     private final Parameter parameter;
+
     public ParameterLookupElement(Parameter parameter) {
         this.parameter = parameter;
     }

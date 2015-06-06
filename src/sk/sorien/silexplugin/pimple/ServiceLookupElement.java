@@ -11,6 +11,7 @@ import sk.sorien.silexplugin.SilexIcons;
 public class ServiceLookupElement extends LookupElement {
 
     private final Service service;
+
     public ServiceLookupElement(Service service) {
         this.service = service;
     }

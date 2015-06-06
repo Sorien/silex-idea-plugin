@@ -40,7 +40,7 @@ public class Utils {
         PhpIndex phpIndex = PhpIndex.getInstance(variable.getProject());
 
         Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-        if(classElementCollections.size() == 0) {
+        if (classElementCollections.size() == 0) {
             return false;
         }
 
@@ -58,19 +58,19 @@ public class Utils {
             return false;
         }
 
-        PsiElement[] params = ((ParameterList)parameterList).getParameters();
+        PsiElement[] params = ((ParameterList) parameterList).getParameters();
         if (!(params.length > parameterIndex && params[parameterIndex].isEquivalentTo(stringLiteralExpression))) {
             return false;
         }
 
         PsiElement methodReference = parameterList.getParent();
-        if(!(methodReference instanceof MethodReference)) {
+        if (!(methodReference instanceof MethodReference)) {
             return false;
         }
 
         // we have extend method
         String methodReferenceName = ((MethodReference) methodReference).getName();
-        if ((methodReferenceName == null ) || (!methodReferenceName.equals(methodName))) {
+        if ((methodReferenceName == null) || (!methodReferenceName.equals(methodName))) {
             return false;
         }
 
@@ -89,7 +89,7 @@ public class Utils {
         PhpIndex phpIndex = PhpIndex.getInstance(variable.getProject());
 
         Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-        if(classElementCollections.size() == 0) {
+        if (classElementCollections.size() == 0) {
             return false;
         }
 

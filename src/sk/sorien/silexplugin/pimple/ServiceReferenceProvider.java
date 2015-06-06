@@ -18,16 +18,16 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
     @Override
     public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
 
-        String serviceName = ((StringLiteralExpression)psiElement).getContents();
+        String serviceName = ((StringLiteralExpression) psiElement).getContents();
 
-        if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression)psiElement) &&
-            !Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) psiElement, "extend", 0)) {
+        if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) psiElement) &&
+                !Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) psiElement, "extend", 0)) {
             return new PsiReference[0];
         }
 
         Service service = ContainerResolver.getService(psiElement.getProject(), serviceName);
         if (service == null) {
-            return  new PsiReference[0];
+            return new PsiReference[0];
         }
 
         PhpIndex phpIndex = PhpIndex.getInstance(psiElement.getProject());
