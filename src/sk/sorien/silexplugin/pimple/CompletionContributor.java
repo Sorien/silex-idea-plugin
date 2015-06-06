@@ -46,11 +46,11 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            for (Service service : ContainerResolver.getServices(element.getProject()).values()){
+            for (Service service : ContainerResolver.getServices(element.getProject()).values()) {
                 resultSet.addElement(new ServiceLookupElement(service));
             }
 
-            for (Parameter parameter : ContainerResolver.getParameters(element.getProject()).values()){
+            for (Parameter parameter : ContainerResolver.getParameters(element.getProject()).values()) {
                 resultSet.addElement(new ParameterLookupElement(parameter));
             }
         }
@@ -61,11 +61,11 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    ProcessingContext context,
                                    @NotNull CompletionResultSet resultSet) {
 
-            PsiElement position = parameters.getPosition().getOriginalElement().getParent();
+            PsiElement element = parameters.getPosition().getOriginalElement().getParent();
 
-            if(position instanceof FieldReference) {
+            if (element instanceof FieldReference) {
 
-                ArrayAccessExpression[] arrayAccesses = PsiTreeUtil.getChildrenOfType(position, ArrayAccessExpression.class);
+                ArrayAccessExpression[] arrayAccesses = PsiTreeUtil.getChildrenOfType(element, ArrayAccessExpression.class);
                 if (arrayAccesses == null || arrayAccesses.length != 1) {
                     return;
                 }
@@ -97,7 +97,7 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
 
                 // variable is pimple container
                 Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-                if(classElementCollections.size() == 0) {
+                if (classElementCollections.size() == 0) {
                     return;
                 }
 
@@ -132,24 +132,23 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    ProcessingContext context,
                                    @NotNull CompletionResultSet resultSet) {
 
-            PsiElement position = parameters.getPosition().getParent();
+            PsiElement element = parameters.getPosition().getParent();
 
-            if(!(position instanceof StringLiteralExpression)) {
+            if (!(element instanceof StringLiteralExpression)) {
                 return;
             }
 
-            if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) position, "extend", 0)) {
+            if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) element, "extend", 0)) {
                 return;
             }
 
-            for (Service element : ContainerResolver.getServices(position.getProject()).values()){
-                resultSet.addElement(new ServiceLookupElement(element));
+            for (Service service : ContainerResolver.getServices(element.getProject()).values()) {
+                resultSet.addElement(new ServiceLookupElement(service));
             }
 
-            for (Parameter element : ContainerResolver.getParameters(position.getProject()).values()){
-                resultSet.addElement(new ParameterLookupElement(element));
+            for (Parameter parameter : ContainerResolver.getParameters(element.getProject()).values()) {
+                resultSet.addElement(new ParameterLookupElement(parameter));
             }
         }
     }
-
 }

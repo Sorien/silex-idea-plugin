@@ -9,17 +9,20 @@ import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * @author Stanislav Turza
+ */
 public class ServiceReference implements PsiReference {
-    private PsiElement element;
-    private TextRange textRange;
-    private String text;
-    private PhpClass phpClass;
+    private final PsiElement element;
+    private final TextRange textRange;
+    private final String text;
+    private final PhpClass phpClass;
 
     public ServiceReference(@NotNull PhpClass phpClass, StringLiteralExpression element) {
         this.element = element;
         this.phpClass = phpClass;
         this.text = element.getContents();
-        this.textRange = new TextRange(1, element.getTextLength() - 1);;
+        this.textRange = new TextRange(1, element.getTextLength() - 1);
     }
 
     @Override

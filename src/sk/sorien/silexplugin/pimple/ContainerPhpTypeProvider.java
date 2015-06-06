@@ -6,6 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
+import com.jetbrains.php.lang.psi.resolve.types.PhpTypeSignatureKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -54,8 +55,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
             String name = ((PhpReference) e).getName();
             if ((name != null) && (!name.isEmpty()))
-                // todo extract constant
-                methodName = 'M'+name;
+                methodName = PhpTypeSignatureKey.METHOD + name;
         }
         // $app['']->property;
         else if (e instanceof FieldReference) {
@@ -69,11 +69,11 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
             String name = ((PhpReference) e).getName();
             if ((name != null) && (!name.isEmpty()))
-                methodName = 'P'+name;
+                methodName = PhpTypeSignatureKey.FIELD + name;
         }
-        // todo add
+        // todo: add
         // signature to class reference
-        //$dispatcher2 = new $app['dispatcher_class']();
+        // $dispatcher2 = new $app['dispatcher_class']();
         else return null;
 
         Variable[] variables = PsiTreeUtil.getChildrenOfType(arrayAccessExpression, Variable.class);

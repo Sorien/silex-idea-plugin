@@ -21,7 +21,7 @@ public class ParameterLookupElement extends LookupElement {
     public void renderElement(LookupElementPresentation presentation) {
 
         presentation.setItemText(getLookupString());
-        presentation.setTypeText(parameter.getType());
+        presentation.setTypeText(parameter.getType().toString());
 
         if (!parameter.getValue().isEmpty())
             presentation.appendTailText("(" + parameter.getValue() + ")", true);

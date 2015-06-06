@@ -33,7 +33,7 @@ public class JsonDumpParser {
                 if (type.equals("class")) {
                     container.addService(new Service(name, value));
                 } else {
-                    container.addParameter(new Parameter(name, type, value));
+                    container.addParameter(new Parameter(name, parameterFromString(type), value));
                 }
             }
 
@@ -49,4 +49,14 @@ public class JsonDumpParser {
             return null;
         }
     }
+
+    public static ParameterType parameterFromString(String value) {
+        for (ParameterType p : ParameterType.values()) {
+            if (value.equals(p.toString())) {
+                return p;
+            }
+        }
+        return ParameterType.UNKNOWN;
+    }
+
 }

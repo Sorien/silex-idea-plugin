@@ -3,7 +3,6 @@ package sk.sorien.silexplugin.pimple;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
@@ -11,6 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+/**
+ * @author Stanislav Turza
+ */
 public class ServiceReferenceProvider extends PsiReferenceProvider {
     @NotNull
     @Override
