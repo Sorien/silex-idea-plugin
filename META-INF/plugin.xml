@@ -1,21 +1,21 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="https://github.com/Sorien/silex-idea-plugin">
   <id>sk.sorien.silex.plugin.id</id>
   <name>Silex Plugin</name>
   <version>0.9</version>
   <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
 
-  <description><![CDATA[]]></description>
+  <description><![CDATA[
+    <h2>Support for Silex PHP Framework.</h2>
+    <p>Beta release</p>
+  ]]></description>
 
   <change-notes><![CDATA[]]>
   </change-notes>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="131"/>
 
-  <!-- Mark as compatible w/ all products based on the IntelliJ Platform (IntelliJ IDEA, RubyMine, WebStorm, PhpStorm, PyCharm and AppCode) -->
   <depends>com.intellij.modules.lang</depends>
 
-  <!-- Dependency on PHP functionality -->
   <depends>com.jetbrains.php</depends>
   <depends>com.intellij.modules.platform</depends>
 
