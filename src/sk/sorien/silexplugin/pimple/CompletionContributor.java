@@ -24,11 +24,11 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
 
     public CompletionContributor() {
         // $app['<caret>']
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(StringLiteralExpression.class).withLanguage(PhpLanguage.INSTANCE), new ArrayAccessCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ArrayAccessCompletionProvider());
         // $app['']-><caret>
         extend(CompletionType.BASIC, PlatformPatterns.psiElement().afterLeaf("->").withLanguage(PhpLanguage.INSTANCE), new FieldReferenceCompletionProvider());
         // $app[''] = $app->extend('<caret>', ...
-        extend(CompletionType.BASIC, PlatformPatterns.psiElement(StringLiteralExpression.class).withLanguage(PhpLanguage.INSTANCE), new ExtendsMethodParameterListCompletionProvider());
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ExtendsMethodParameterListCompletionProvider());
     }
 
     private static class ArrayAccessCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -37,6 +37,10 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement position = parameters.getPosition().getParent();
+
+            if(!(position instanceof StringLiteralExpression)) {
+                return;
+            }
 
             position = position.getParent();
             if (!(position instanceof ArrayIndex)) {
@@ -159,6 +163,10 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement position = parameters.getPosition().getParent();
+
+            if(!(position instanceof StringLiteralExpression)) {
+                return;
+            }
 
             PsiElement parameterList = position.getParent();
             if (!(parameterList instanceof ParameterList)) {
