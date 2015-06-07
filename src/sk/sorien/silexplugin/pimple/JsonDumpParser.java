@@ -51,7 +51,7 @@ public class JsonDumpParser {
         }
     }
 
-    public static ParameterType parameterFromString(String value) {
+    private static ParameterType parameterFromString(String value) {
         for (ParameterType p : ParameterType.values()) {
             if (value.equals(p.toString())) {
                 return p;

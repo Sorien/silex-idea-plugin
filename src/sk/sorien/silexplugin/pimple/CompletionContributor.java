@@ -78,7 +78,7 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 Variable variable = variables[0];
 
                 // skip simple \array
-                if (variable.getSignature().equals("#C\\array")) {
+                if (variable.getSignature().equals(Utils.ARRAY_SIGNATURE)) {
                     return;
                 }
 

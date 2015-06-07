@@ -93,7 +93,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         // skip simple \array
         String variableSignature = variables[0].getSignature();
-        if (variableSignature.equals("#C\\array")) {
+        if (variableSignature.equals(Utils.ARRAY_SIGNATURE)) {
             return null;
         }
 
@@ -135,7 +135,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return Collections.emptySet();
     }
 
-    public Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element, String methodName) {
+    private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element, String methodName) {
 
         Service service = ContainerResolver.getService(project, element);
 
@@ -144,7 +144,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             if (methodName.isEmpty())
                 return phpIndex.getClassesByFQN(service.getClassName());
 
-            return phpIndex.getBySignature("#" + methodName.charAt(0) + "#C" + service.getClassName() + "." + methodName.substring(1));
+            return phpIndex.getBySignature("#" + methodName.charAt(0) + "#" + PhpTypeSignatureKey.CLASS + service.getClassName() + "." + methodName.substring(1));
         }
 
 // resolve basic types - not working
