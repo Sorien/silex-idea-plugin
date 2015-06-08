@@ -6,7 +6,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
-import com.jetbrains.php.lang.psi.resolve.types.PhpTypeSignatureKey;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -16,6 +15,10 @@ import java.util.Collections;
  * @author Stanislav Turza
  */
 public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
+
+    public final char CLASS_SIGNATURE   = 'C';
+    public final char FIELD_SIGNATURE   = 'P';
+    public final char METHOD_SIGNATURE  = 'M';
 
     @Override
     public char getKey() {
@@ -55,7 +58,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
             String name = ((PhpReference) e).getName();
             if ((name != null) && (!name.isEmpty()))
-                methodName = PhpTypeSignatureKey.METHOD + name;
+                methodName = METHOD_SIGNATURE + name;
         }
         // $app['']->property;
         else if (e instanceof FieldReference) {
@@ -69,7 +72,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
             String name = ((PhpReference) e).getName();
             if ((name != null) && (!name.isEmpty()))
-                methodName = PhpTypeSignatureKey.FIELD + name;
+                methodName = FIELD_SIGNATURE + name;
         }
         // todo: add
         // signature to class reference
@@ -144,7 +147,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             if (methodName.isEmpty())
                 return phpIndex.getClassesByFQN(service.getClassName());
 
-            return phpIndex.getBySignature("#" + methodName.charAt(0) + "#" + PhpTypeSignatureKey.CLASS + service.getClassName() + "." + methodName.substring(1));
+            return phpIndex.getBySignature("#" + methodName.charAt(0) + "#" + CLASS_SIGNATURE + service.getClassName() + "." + methodName.substring(1));
         }
 
 // resolve basic types - not working

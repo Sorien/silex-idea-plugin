@@ -4,7 +4,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
-import com.jetbrains.php.lang.psi.resolve.types.PhpTypeSignatureKey;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
  */
 public class Utils {
 
-    public static final String ARRAY_SIGNATURE = "#" + PhpTypeSignatureKey.CLASS + "\\array";
+    public static final String ARRAY_SIGNATURE = "#C\\array";
 
     public static Boolean isArrayAccessLiteralOfPimpleContainer(StringLiteralExpression stringLiteralExpression) {
 
