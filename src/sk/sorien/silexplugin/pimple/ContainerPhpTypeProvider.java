@@ -26,9 +26,25 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
     public String getType(PsiElement e) {
 
         ArrayAccessExpression arrayAccessExpression;
+        Boolean internalResolve = false;
 
         if (e instanceof ArrayAccessExpression) {
             arrayAccessExpression = (ArrayAccessExpression)e;
+        }
+        else if (e instanceof NewExpression)
+        {
+            ClassReference[] classReferences = PsiTreeUtil.getChildrenOfType(e, ClassReference.class);
+            if (classReferences == null || classReferences.length != 1) {
+                return null;
+            }
+
+            ArrayAccessExpression[] arrayAccessExpressions = PsiTreeUtil.getChildrenOfType(classReferences[0], ArrayAccessExpression.class);
+            if (arrayAccessExpressions == null || arrayAccessExpressions.length != 1) {
+                return null;
+            }
+
+            arrayAccessExpression = arrayAccessExpressions[0];
+            internalResolve = true;
         }
         else return null;
 
@@ -53,7 +69,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        return variableSignature + '[' + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
+        return variableSignature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
     }
 
     @Override
@@ -92,17 +108,19 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
     private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element) {
 
-        Service service = ContainerResolver.getService(project, element);
+        if (element.startsWith("@")) {
+            Parameter parameter = ContainerResolver.getParameter(project, element.substring(1));
 
-        if (service != null) {
-            return phpIndex.getClassesByFQN(service.getClassName());
+            if (parameter != null) {
+                return phpIndex.getClassesByFQN(parameter.getValue());
+            }
+        } else {
+            Service service = ContainerResolver.getService(project, element);
+
+            if (service != null) {
+                return phpIndex.getClassesByFQN(service.getClassName());
+            }
         }
-
-//        Parameter parameter = ContainerResolver.getParameter(project, element);
-//
-//        if (parameter != null) {
-//            return phpIndex.getBySignature("#C"+parameter.getFqn());
-//        }
 
         return Collections.emptySet();
     }
