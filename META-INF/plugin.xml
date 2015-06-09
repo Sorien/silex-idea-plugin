@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Sorien/silex-idea-plugin">
   <id>sk.sorien.silex.plugin.id</id>
   <name>Silex Plugin</name>
-  <version>0.9.1</version>
+  <version>0.9.4</version>
   <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
 
   <description><![CDATA[
@@ -10,6 +10,11 @@
   ]]></description>
 
   <change-notes><![CDATA[
+    <h2>0.9.4</h2>
+    <ul>
+      <li>Refactored Type resolution</li>
+      <li>Improved Pimple Container Base class detection</li>
+    </ul>
     <h2>0.9.1</h2>
     <ul>
       <li>Service References</li>
