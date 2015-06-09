@@ -108,22 +108,18 @@ public class Utils {
         if (isPimpleContainerBaseClass(phpClass.getFQN())) {
             return true;
         } else {
+            Integer counter = 0;
 
-            ExtendsList extendList = phpClass.getExtendsList();
-
-            List<ClassReference> classReferences = extendList.getReferenceElements();
-            if (classReferences != null) {
-
-                for (ClassReference classReference : classReferences) {
-
-                    if (isPimpleContainerBaseClass(classReference.getFQN())) {
-                        return true;
-                    }
+            while ((phpClass = phpClass.getSuperClass()) != null && counter < 5) {
+                
+                if (isPimpleContainerBaseClass(phpClass.getFQN())) {
+                    return true;
                 }
-            }
-        }
 
-        return false;
+                counter++;
+            }
+            return false;
+        }
     }
 
     private static Boolean isPimpleContainerBaseClass(String className) {
