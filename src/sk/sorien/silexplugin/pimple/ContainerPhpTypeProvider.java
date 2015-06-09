@@ -16,10 +16,6 @@ import java.util.Collections;
  */
 public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
-    public final char CLASS_SIGNATURE   = 'C';
-    public final char FIELD_SIGNATURE   = 'P';
-    public final char METHOD_SIGNATURE  = 'M';
-
     @Override
     public char getKey() {
         return 'Š';
@@ -30,53 +26,10 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
     public String getType(PsiElement e) {
 
         ArrayAccessExpression arrayAccessExpression;
-        String methodName = "";
 
-        if (e instanceof Variable) {
-
-            PsiElement parent = e.getParent();
-            if (!(parent instanceof AssignmentExpression)) {
-                return null;
-            }
-
-            ArrayAccessExpression[] arrayAccessExpressions = PsiTreeUtil.getChildrenOfType(parent, ArrayAccessExpression.class);
-            if (arrayAccessExpressions == null || arrayAccessExpressions.length != 1) {
-                return null;
-            }
-
-            arrayAccessExpression = arrayAccessExpressions[0];
+        if (e instanceof ArrayAccessExpression) {
+            arrayAccessExpression = (ArrayAccessExpression)e;
         }
-        // $app['']->method('')
-        else if (e instanceof MethodReference) {
-
-            ArrayAccessExpression[] arrayAccessExpressions = PsiTreeUtil.getChildrenOfType(e, ArrayAccessExpression.class);
-            if (arrayAccessExpressions == null || arrayAccessExpressions.length != 1) {
-                return null;
-            }
-
-            arrayAccessExpression = arrayAccessExpressions[0];
-
-            String name = ((PhpReference) e).getName();
-            if ((name != null) && (!name.isEmpty()))
-                methodName = METHOD_SIGNATURE + name;
-        }
-        // $app['']->property;
-        else if (e instanceof FieldReference) {
-
-            ArrayAccessExpression[] arrayAccessExpressions = PsiTreeUtil.getChildrenOfType(e, ArrayAccessExpression.class);
-            if (arrayAccessExpressions == null || arrayAccessExpressions.length != 1) {
-                return null;
-            }
-
-            arrayAccessExpression = arrayAccessExpressions[0];
-
-            String name = ((PhpReference) e).getName();
-            if ((name != null) && (!name.isEmpty()))
-                methodName = FIELD_SIGNATURE + name;
-        }
-        // todo: add
-        // signature to class reference
-        // $dispatcher2 = new $app['dispatcher_class']();
         else return null;
 
         Variable[] variables = PsiTreeUtil.getChildrenOfType(arrayAccessExpression, Variable.class);
@@ -100,7 +53,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        return variableSignature + '[' + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']' + methodName;
+        return variableSignature + '[' + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
     }
 
     @Override
@@ -114,7 +67,6 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         String classSignature = expression.substring(0, openBraceletIndex);
         String parameter = expression.substring(openBraceletIndex + 1, closeBraceletIndex);
-        String methodName = expression.substring(closeBraceletIndex + 1, expression.length());
 
         PhpIndex phpIndex = PhpIndex.getInstance(project);
 
@@ -129,7 +81,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         }
 
         if (Utils.extendsPimpleContainerClass((PhpClass) phpNamedElement)) {
-            Collection<? extends PhpNamedElement> resolvedElementCollection = resolveElement(project, phpIndex, parameter, methodName);
+            Collection<? extends PhpNamedElement> resolvedElementCollection = resolveElement(project, phpIndex, parameter);
             if (resolvedElementCollection.size() > 0) {
                 return resolvedElementCollection;
             }
@@ -138,19 +90,14 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return Collections.emptySet();
     }
 
-    private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element, String methodName) {
+    private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element) {
 
         Service service = ContainerResolver.getService(project, element);
 
         if (service != null) {
-
-            if (methodName.isEmpty())
-                return phpIndex.getClassesByFQN(service.getClassName());
-
-            return phpIndex.getBySignature("#" + methodName.charAt(0) + "#" + CLASS_SIGNATURE + service.getClassName() + "." + methodName.substring(1));
+            return phpIndex.getClassesByFQN(service.getClassName());
         }
 
-// resolve basic types - not working
 //        Parameter parameter = ContainerResolver.getParameter(project, element);
 //
 //        if (parameter != null) {

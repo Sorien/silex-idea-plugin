@@ -6,7 +6,6 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Stanislav Turza
@@ -111,7 +110,7 @@ public class Utils {
             Integer counter = 0;
 
             while ((phpClass = phpClass.getSuperClass()) != null && counter < 5) {
-                
+
                 if (isPimpleContainerBaseClass(phpClass.getFQN())) {
                     return true;
                 }
