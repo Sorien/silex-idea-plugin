@@ -20,9 +20,10 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
 
         String serviceName = ((StringLiteralExpression) psiElement).getContents();
 
-        if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) psiElement) &&
-                !Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) psiElement, "extend", 0)) {
-            return new PsiReference[0];
+        if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) psiElement)) {
+            if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) psiElement, "extend", 0)) {
+                return new PsiReference[0];
+            }
         }
 
         Service service = ContainerResolver.getService(psiElement.getProject(), serviceName);

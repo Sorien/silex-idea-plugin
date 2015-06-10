@@ -48,8 +48,23 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         }
         else return null;
 
-        Variable[] variables = PsiTreeUtil.getChildrenOfType(arrayAccessExpression, Variable.class);
-        if (variables == null || variables.length != 1) {
+        String signature = "";
+
+        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(arrayAccessExpression, Variable.class, FieldReference.class);
+        if (signatureElement == null) {
+            return null;
+        }
+
+        if (signatureElement instanceof Variable) {
+            signature = ((Variable)signatureElement).getSignature();
+        }
+
+        if (signatureElement instanceof FieldReference) {
+            signature = ((FieldReference)signatureElement).getSignature();
+        }
+
+        // skip simple \array
+        if (signature.equals(Utils.ARRAY_SIGNATURE)) {
             return null;
         }
 
@@ -63,17 +78,13 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        // skip simple \array
-        String variableSignature = variables[0].getSignature();
-        if (variableSignature.equals(Utils.ARRAY_SIGNATURE)) {
-            return null;
-        }
-
-        return variableSignature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
+        return signature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
     }
 
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Project project) {
+
+        System.out.println(expression);
 
         int openBraceletIndex = expression.lastIndexOf('[');
         int closeBraceletIndex = expression.lastIndexOf(']');
@@ -81,26 +92,14 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return Collections.emptySet();
         }
 
-        String classSignature = expression.substring(0, openBraceletIndex);
+        String signature = expression.substring(0, openBraceletIndex);
         String parameter = expression.substring(openBraceletIndex + 1, closeBraceletIndex);
 
         PhpIndex phpIndex = PhpIndex.getInstance(project);
+        PhpClass element = Utils.getPhpClassFromSignature(phpIndex, signature);
 
-        Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(classSignature, null, 0);
-        if (classElementCollections.size() == 0) {
-            return Collections.emptySet();
-        }
-
-        PhpNamedElement phpNamedElement = classElementCollections.iterator().next();
-        if (!(phpNamedElement instanceof PhpClass)) {
-            return Collections.emptySet();
-        }
-
-        if (Utils.extendsPimpleContainerClass((PhpClass) phpNamedElement)) {
-            Collection<? extends PhpNamedElement> resolvedElementCollection = resolveElement(project, phpIndex, parameter);
-            if (resolvedElementCollection.size() > 0) {
-                return resolvedElementCollection;
-            }
+        if (Utils.extendsPimpleContainerClass(element)) {
+            return resolveElement(project, phpIndex, parameter);
         }
 
         return Collections.emptySet();
@@ -108,6 +107,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
     private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element) {
 
+        System.out.println("    " + element);
         if (element.startsWith("@")) {
             Parameter parameter = ContainerResolver.getParameter(project, element.substring(1));
 

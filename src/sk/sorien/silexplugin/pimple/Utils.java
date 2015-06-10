@@ -26,31 +26,30 @@ public class Utils {
             return false;
         }
 
-        Variable[] variables = PsiTreeUtil.getChildrenOfType(element, Variable.class);
-        if (variables == null || variables.length != 1) {
+        String signature = "";
+
+        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class);
+        if (signatureElement == null) {
             return false;
         }
 
-        Variable variable = variables[0];
+        if (signatureElement instanceof Variable) {
+            signature = ((Variable)signatureElement).getSignature();
+        }
+
+        if (signatureElement instanceof FieldReference) {
+            signature = ((FieldReference)signatureElement).getSignature();
+        }
 
         // skip simple \array
-        if (variable.getSignature().equals(ARRAY_SIGNATURE)) {
+        if (signature.equals(Utils.ARRAY_SIGNATURE)) {
             return false;
         }
 
-        PhpIndex phpIndex = PhpIndex.getInstance(variable.getProject());
+        PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
+        PhpClass phpClass = getPhpClassFromSignature(phpIndex, signature);
 
-        Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-        if (classElementCollections.size() == 0) {
-            return false;
-        }
-
-        PhpNamedElement phpNamedElement = classElementCollections.iterator().next();
-        if (!(phpNamedElement instanceof PhpClass) || !Utils.extendsPimpleContainerClass((PhpClass) phpNamedElement)) {
-            return false;
-        }
-
-        return true;
+        return Utils.extendsPimpleContainerClass(phpClass);
     }
 
     public static Boolean isArgumentOfPimpleContainerMethod(StringLiteralExpression stringLiteralExpression, String methodName, Integer parameterIndex) {
@@ -75,36 +74,37 @@ public class Utils {
             return false;
         }
 
-        Variable[] variables = PsiTreeUtil.getChildrenOfType(methodReference, Variable.class);
-        if (variables == null || variables.length != 1) {
+        String signature = "";
+
+        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(methodReference, Variable.class, FieldReference.class);
+        if (signatureElement == null) {
             return false;
         }
 
-        Variable variable = variables[0];
+        if (signatureElement instanceof Variable) {
+            signature = ((Variable)signatureElement).getSignature();
+        }
+
+        if (signatureElement instanceof FieldReference) {
+            signature = ((FieldReference)signatureElement).getSignature();
+        }
 
         // skip simple \array
-        if (variable.getSignature().equals(ARRAY_SIGNATURE)) {
+        if (signature.equals(ARRAY_SIGNATURE)) {
             return false;
         }
 
-        PhpIndex phpIndex = PhpIndex.getInstance(variable.getProject());
+        PhpIndex phpIndex = PhpIndex.getInstance(stringLiteralExpression.getProject());
+        PhpClass phpClass = getPhpClassFromSignature(phpIndex, signature);
 
-        Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(variable.getSignature(), null, 0);
-        if (classElementCollections.size() == 0) {
-            return false;
-        }
-
-        PhpNamedElement phpNamedElement = classElementCollections.iterator().next();
-        if (!(phpNamedElement instanceof PhpClass) || !Utils.extendsPimpleContainerClass((PhpClass) phpNamedElement)) {
-            return false;
-        }
-
-        return true;
+        return Utils.extendsPimpleContainerClass(phpClass);
     }
 
     public static Boolean extendsPimpleContainerClass(PhpClass phpClass) {
 
-        if (isPimpleContainerBaseClass(phpClass.getFQN())) {
+        if (phpClass == null) {
+            return false;
+        } else if (isPimpleContainerBaseClass(phpClass.getFQN())) {
             return true;
         } else {
             Integer counter = 0;
@@ -123,5 +123,34 @@ public class Utils {
 
     private static Boolean isPimpleContainerBaseClass(String className) {
         return className != null && (className.equals("\\Silex\\Application") || className.equals("\\Pimple\\Container") || className.equals("\\Pimple"));
+    }
+
+    public static PhpClass getPhpClassFromSignature(PhpIndex phpIndex, String signature) {
+
+        Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(signature, null, 0);
+        if (classElementCollections.size() == 0) {
+            return null;
+        }
+
+        PhpNamedElement element = classElementCollections.iterator().next();
+
+        if (!(element instanceof PhpClass)) {
+
+            if (!(element instanceof Field)) {
+                return null;
+            }
+
+            classElementCollections = phpIndex.getClassesByFQN(element.getType().toString());
+            if (classElementCollections.size() == 0) {
+                return null;
+            }
+
+            element = classElementCollections.iterator().next();
+            if (!(element instanceof PhpClass)) {
+                return null;
+            }
+        }
+
+        return (PhpClass)element;
     }
 }
