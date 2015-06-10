@@ -84,8 +84,6 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Project project) {
 
-        System.out.println(expression);
-
         int openBraceletIndex = expression.lastIndexOf('[');
         int closeBraceletIndex = expression.lastIndexOf(']');
         if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
@@ -96,9 +94,9 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         String parameter = expression.substring(openBraceletIndex + 1, closeBraceletIndex);
 
         PhpIndex phpIndex = PhpIndex.getInstance(project);
-        PhpClass element = Utils.getPhpClassFromSignature(phpIndex, signature);
+        PhpClass phpclass = Utils.getPhpClassFromSignature(phpIndex, signature);
 
-        if (Utils.extendsPimpleContainerClass(element)) {
+        if (Utils.extendsPimpleContainerClass(phpclass)) {
             return resolveElement(project, phpIndex, parameter);
         }
 
@@ -107,7 +105,6 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
     private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element) {
 
-        System.out.println("    " + element);
         if (element.startsWith("@")) {
             Parameter parameter = ContainerResolver.getParameter(project, element.substring(1));
 
