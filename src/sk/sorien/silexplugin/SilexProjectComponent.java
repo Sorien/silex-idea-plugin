@@ -2,17 +2,18 @@ package sk.sorien.silexplugin;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import sk.sorien.silexplugin.pimple.ContainerResolver;
 import sk.sorien.silexplugin.pimple.JsonFileContainer;
 
 /**
  * @author Stanislav Turza
  */
-public class SilexPluginComponent implements com.intellij.openapi.components.ProjectComponent {
+public class SilexProjectComponent implements com.intellij.openapi.components.ProjectComponent {
 
     private final Project project;
 
-    public SilexPluginComponent(Project project) {
+    public SilexProjectComponent(Project project) {
         this.project = project;
     }
 
@@ -22,6 +23,10 @@ public class SilexPluginComponent implements com.intellij.openapi.components.Pro
 
     public void projectClosed() {
         ContainerResolver.removeContainer(project);
+    }
+
+    public static boolean isEnabled(@Nullable Project project) {
+        return project != null && Configuration.getInstance(project).pluginEnabled;
     }
 
     public void initComponent() {

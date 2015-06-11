@@ -12,6 +12,7 @@
   <change-notes><![CDATA[
     <h2>0.9.5</h2>
     <ul>
+      <li>Allow disable plugin per project<li>
       <li>Refactored Container loading</li>
       <li>Resolve pimple as a class variable </li>
     </ul>
@@ -33,11 +34,14 @@
     <completion.contributor language="PHP" implementationClass="sk.sorien.silexplugin.pimple.CompletionContributor"/>
     <psi.referenceContributor implementation="sk.sorien.silexplugin.pimple.ServiceReferenceContributor"/>
     <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.ContainerPhpTypeProvider"/>
+
+    <projectConfigurable instance="sk.sorien.silexplugin.ConfigurationForm" displayName="Silex Plugin"/>
+    <projectService serviceImplementation="sk.sorien.silexplugin.Configuration"/>
   </extensions>
 
   <project-components>
     <component>
-      <implementation-class>sk.sorien.silexplugin.SilexPluginComponent</implementation-class>
+      <implementation-class>sk.sorien.silexplugin.SilexProjectComponent</implementation-class>
       <loadForDefaultProject/>
     </component>
   </project-components>

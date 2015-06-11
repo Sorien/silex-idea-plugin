@@ -7,6 +7,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
+import sk.sorien.silexplugin.SilexProjectComponent;
 
 import java.util.Collection;
 
@@ -19,6 +20,10 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
     public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
 
         String serviceName = ((StringLiteralExpression) psiElement).getContents();
+
+        if(!SilexProjectComponent.isEnabled(psiElement.getProject())) {
+            return new PsiReference[0];
+        }
 
         if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) psiElement)) {
             if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) psiElement, "extend", 0)) {

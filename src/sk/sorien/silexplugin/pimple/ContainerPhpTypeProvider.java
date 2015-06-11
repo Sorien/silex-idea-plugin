@@ -7,6 +7,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
 import org.jetbrains.annotations.Nullable;
+import sk.sorien.silexplugin.SilexProjectComponent;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -83,6 +84,10 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Project project) {
+
+        if(!SilexProjectComponent.isEnabled(project)) {
+            return Collections.emptySet();
+        }
 
         int openBraceletIndex = expression.lastIndexOf('[');
         int closeBraceletIndex = expression.lastIndexOf(']');

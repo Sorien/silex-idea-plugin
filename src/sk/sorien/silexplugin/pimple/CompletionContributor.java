@@ -10,6 +10,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
+import sk.sorien.silexplugin.SilexProjectComponent;
 
 /**
  * @author Stanislav Turza
@@ -28,7 +29,12 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    ProcessingContext context,
                                    @NotNull CompletionResultSet resultSet) {
 
+
             PsiElement element = parameters.getPosition().getParent();
+
+            if(!SilexProjectComponent.isEnabled(element.getProject())) {
+                return;
+            }
 
             if (!(element instanceof StringLiteralExpression)) {
                 return;
@@ -54,6 +60,10 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement element = parameters.getPosition().getParent();
+
+            if(!SilexProjectComponent.isEnabled(element.getProject())) {
+                return;
+            }
 
             if (!(element instanceof StringLiteralExpression)) {
                 return;
