@@ -1,17 +1,27 @@
 package sk.sorien.silexplugin;
 
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import sk.sorien.silexplugin.pimple.ContainerResolver;
+import sk.sorien.silexplugin.pimple.JsonFileContainer;
 
 /**
  * @author Stanislav Turza
  */
 public class SilexPluginComponent implements com.intellij.openapi.components.ProjectComponent {
-    public void projectOpened() {
 
+    private final Project project;
+
+    public SilexPluginComponent(Project project) {
+        this.project = project;
+    }
+
+    public void projectOpened() {
+        ContainerResolver.putContainer(project, new JsonFileContainer(project));
     }
 
     public void projectClosed() {
-
+        ContainerResolver.removeContainer(project);
     }
 
     public void initComponent() {

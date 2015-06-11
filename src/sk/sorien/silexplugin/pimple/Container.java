@@ -1,5 +1,6 @@
 package sk.sorien.silexplugin.pimple;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.HashMap;
 
 import java.util.Map;
@@ -9,10 +10,13 @@ import java.util.Map;
  */
 public class Container {
 
-    private Map<String, Service> services;
-    private Map<String, Parameter> parameters;
+    protected Map<String, Service> services;
+    protected Map<String, Parameter> parameters;
 
-    public Container() {
+    protected Project project;
+
+    public Container(Project project) {
+        this.project = project;
         services = new HashMap<String, Service>();
         parameters = new HashMap<String, Parameter>();
     }
@@ -21,23 +25,8 @@ public class Container {
         return services;
     }
 
-    public void setServices(Map<String, Service> services) {
-        this.services = services;
-    }
-
-    public void addService(Service service) {
-        services.put(service.getName(), service);
-    }
-
     public Map<String, Parameter> getParameters() {
         return parameters;
     }
-
-    public void setParameters(Map<String, Parameter> parameters) {
-        this.parameters = parameters;
-    }
-
-    public void addParameter(Parameter parameter) {
-        parameters.put(parameter.getName(), parameter);
-    }
 }
+

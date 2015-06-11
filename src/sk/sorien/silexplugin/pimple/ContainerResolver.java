@@ -3,7 +3,7 @@ package sk.sorien.silexplugin.pimple;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -11,22 +11,14 @@ import java.util.Map;
  */
 public class ContainerResolver {
 
-    private static final String CONTAINER_JSON_DUMP = "pimple.json";
+    private static final IdentityHashMap<Project, Container> containers = new IdentityHashMap<Project, Container>();
 
-    private static long lastModified = 0;
-    private static Container container;
+    public static void putContainer(Project project, Container container) {
+        containers.put(project, container);
+    }
 
-    private static void Load(Project project) {
-
-        File file = new File(project.getBaseDir().getPath() + '/' + CONTAINER_JSON_DUMP);
-
-        if (file.exists() && file.lastModified() != lastModified) {
-            Container newContainer = JsonDumpParser.parse(file);
-            if (newContainer != null) {
-                container = newContainer;
-            }
-            lastModified = file.lastModified();
-        }
+    public static void removeContainer(Project project) {
+        containers.remove(project);
     }
 
     @Nullable
@@ -35,9 +27,7 @@ public class ContainerResolver {
     }
 
     public static Map<String, Service> getServices(Project project) {
-
-        Load(project);
-        return container.getServices();
+        return containers.get(project).getServices();
     }
 
     @Nullable
@@ -46,9 +36,7 @@ public class ContainerResolver {
     }
 
     public static Map<String, Parameter> getParameters(Project project) {
-
-        Load(project);
-        return container.getParameters();
+        return containers.get(project).getParameters();
     }
 
 }

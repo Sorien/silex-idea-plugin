@@ -1,6 +1,6 @@
 package sk.sorien.silexplugin.pimple;
 
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.project.Project;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -10,20 +10,47 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
-/**
- * @author Stanislav Turza
- */
-public class JsonDumpParser {
+public class JsonFileContainer extends Container {
 
-    @Nullable
-    public static Container parse(File file) {
+    private static final String CONTAINER_JSON_DUMP = "pimple.json";
+
+    private long lastModified = 0;
+    private final File file;
+
+    public JsonFileContainer(Project project) {
+        super(project);
+        file = new File(project.getBaseDir().getPath() + '/' + CONTAINER_JSON_DUMP);
+    }
+
+    @Override
+    public Map<String, Service> getServices() {
+        Load();
+        return super.getServices();
+    }
+
+    @Override
+    public Map<String, Parameter> getParameters() {
+        Load();
+        return super.getParameters();
+    }
+
+    private void Load() {
+
+        if (file.exists() && file.lastModified() != lastModified && parse()) {
+            lastModified = file.lastModified();
+        }
+    }
+
+    public Boolean parse() {
         try {
-            Container container = new Container();
-
             FileReader reader = new FileReader(file);
             JSONParser jsonParser = new JSONParser();
             JSONArray elements = (JSONArray) jsonParser.parse(reader);
+
+            services.clear();
+            parameters.clear();
 
             for (Object element1 : elements) {
                 JSONObject element = (JSONObject) element1;
@@ -32,22 +59,22 @@ public class JsonDumpParser {
                 String value = element.get("value").toString();
 
                 if (type.equals("class")) {
-                    container.addService(new Service(name, value));
+                    services.put(name, (new Service(name, value)));
                 } else {
-                    container.addParameter(new Parameter(name, parameterFromString(type), value));
+                    parameters.put(name, new Parameter(name, parameterFromString(type), value));
                 }
             }
 
-            return container;
+            return true;
 
         } catch (FileNotFoundException ex) {
-            return null;
+            return false;
         } catch (IOException ex) {
-            return null;
+            return false;
         } catch (NullPointerException ex) {
-            return null;
+            return false;
         } catch (ParseException e) {
-            return null;
+            return false;
         }
     }
 
@@ -59,5 +86,4 @@ public class JsonDumpParser {
         }
         return ParameterType.UNKNOWN;
     }
-
 }
