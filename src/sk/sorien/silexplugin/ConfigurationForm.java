@@ -16,7 +16,7 @@ public class ConfigurationForm implements Configurable {
 
     private JCheckBox pluginEnabled;
     private JPanel basePanel;
-    private Configuration configuration;
+    private final Configuration configuration;
 
     public ConfigurationForm(@NotNull Project project) {
         configuration = Configuration.getInstance(project);

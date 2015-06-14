@@ -10,10 +10,10 @@ import java.util.Map;
  */
 public class Container {
 
-    protected Map<String, Service> services;
-    protected Map<String, Parameter> parameters;
+    protected final Map<String, Service> services;
+    protected final Map<String, Parameter> parameters;
 
-    protected Project project;
+    protected final Project project;
 
     public Container(Project project) {
         this.project = project;

@@ -43,7 +43,7 @@ public class JsonFileContainer extends Container {
         }
     }
 
-    public Boolean parse() {
+    private Boolean parse() {
         try {
             FileReader reader = new FileReader(file);
             JSONParser jsonParser = new JSONParser();

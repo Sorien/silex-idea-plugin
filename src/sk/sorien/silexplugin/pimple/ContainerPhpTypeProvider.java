@@ -39,7 +39,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return null;
     }
 
-    public String getTypeForArrayAccess(PsiElement e) {
+    private String getTypeForArrayAccess(PsiElement e) {
 
         ArrayAccessExpression arrayAccessExpression;
         Boolean internalResolve = false;
@@ -97,7 +97,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return signature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
     }
 
-    public String getTypeForParametersOfExtendMethodAnonymousFunction(PsiElement e) {
+    private String getTypeForParametersOfExtendMethodAnonymousFunction(PsiElement e) {
 
         if (!(e instanceof com.jetbrains.php.lang.psi.elements.Parameter)) {
             return null;
