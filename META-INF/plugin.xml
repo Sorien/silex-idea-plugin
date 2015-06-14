@@ -10,9 +10,13 @@
   ]]></description>
 
   <change-notes><![CDATA[
+    <h2>0.9.6</h2>
+    <ul>
+      <li>Resolve extend anonymous function parameters</li>
+    </ul>
     <h2>0.9.5</h2>
     <ul>
-      <li>Allow disable plugin per project<li>
+      <li>Allow disable plugin per project</li>
       <li>Refactored Container loading</li>
       <li>Resolve pimple as a class variable </li>
     </ul>

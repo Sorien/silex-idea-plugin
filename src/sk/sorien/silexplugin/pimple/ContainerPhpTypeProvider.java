@@ -26,6 +26,21 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
     @Override
     public String getType(PsiElement e) {
 
+        String signature = getTypeForArrayAccess(e);
+        if (signature != null) {
+            return signature;
+        }
+
+        signature = getTypeForParametersOfExtendMethodAnonymousFunction(e);
+        if (signature != null) {
+            return signature;
+        }
+
+        return null;
+    }
+
+    public String getTypeForArrayAccess(PsiElement e) {
+
         ArrayAccessExpression arrayAccessExpression;
         Boolean internalResolve = false;
 
@@ -82,6 +97,86 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return signature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
     }
 
+    public String getTypeForParametersOfExtendMethodAnonymousFunction(PsiElement e) {
+
+        if (!(e instanceof com.jetbrains.php.lang.psi.elements.Parameter)) {
+            return null;
+        }
+
+        PsiElement element = e.getParent();
+        if (!(element instanceof ParameterList)) {
+            return  null;
+        }
+
+        Boolean includeServiceName = true;
+
+        PsiElement[] params = ((ParameterList) element).getParameters();
+        // is first argument
+        if (!(params.length > 0 && params[0].isEquivalentTo(e))) {
+            // is second argument
+            if (!(params.length > 1 && params[1].isEquivalentTo(e))) {
+                return null;
+            }
+
+            includeServiceName = false;
+        }
+
+        element = element.getParent();
+        if (!(element instanceof Function)) {
+            return null;
+        }
+
+        element = element.getParent();
+        if (!(element instanceof PhpExpression)) {
+            return null;
+        }
+
+        PsiElement closureReference = element;
+
+        element = element.getParent();
+        if (!(element instanceof ParameterList)) {
+            return null;
+        }
+
+        params = ((ParameterList) element).getParameters();
+        if (!(params.length > 1 && params[1].isEquivalentTo(closureReference))) {
+            return null;
+        }
+
+        element = element.getParent();
+        if (!(element instanceof MethodReference)) {
+            return null;
+        }
+
+        // we have extend method
+        String methodReferenceName = ((MethodReference) element).getName();
+        if ((methodReferenceName == null) || (!methodReferenceName.equals("extend"))) {
+            return null;
+        }
+
+        String signature = "";
+
+        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class);
+        if (signatureElement == null) {
+            return null;
+        }
+
+        if (signatureElement instanceof Variable) {
+            signature = ((Variable)signatureElement).getSignature();
+        }
+
+        if (signatureElement instanceof FieldReference) {
+            signature = ((FieldReference)signatureElement).getSignature();
+        }
+
+        // skip simple \array
+        if (signature.equals(Utils.ARRAY_SIGNATURE)) {
+            return null;
+        }
+
+        return signature + ( includeServiceName ? '[' + ((StringLiteralExpression)params[0]).getContents() + ']' : "");
+    }
+
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Project project) {
 
@@ -89,16 +184,18 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return Collections.emptySet();
         }
 
+        PhpIndex phpIndex = PhpIndex.getInstance(project);
+
         int openBraceletIndex = expression.lastIndexOf('[');
         int closeBraceletIndex = expression.lastIndexOf(']');
+
         if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
-            return Collections.emptySet();
+            return phpIndex.getBySignature(expression);
         }
 
         String signature = expression.substring(0, openBraceletIndex);
         String parameter = expression.substring(openBraceletIndex + 1, closeBraceletIndex);
 
-        PhpIndex phpIndex = PhpIndex.getInstance(project);
         PhpClass phpclass = Utils.getPhpClassFromSignature(phpIndex, signature);
 
         if (Utils.extendsPimpleContainerClass(phpclass)) {
@@ -108,20 +205,27 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return Collections.emptySet();
     }
 
-    private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String element) {
+    private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String value) {
 
-        if (element.startsWith("@")) {
-            Parameter parameter = ContainerResolver.getParameter(project, element.substring(1));
+        if (value.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        if (value.startsWith("@")) {
+
+            Parameter parameter = ContainerResolver.getParameter(project, value.substring(1));
 
             if (parameter != null) {
                 return phpIndex.getClassesByFQN(parameter.getValue());
             }
-        } else {
-            Service service = ContainerResolver.getService(project, element);
 
-            if (service != null) {
-                return phpIndex.getClassesByFQN(service.getClassName());
-            }
+            return Collections.emptySet();
+        }
+
+        Service service = ContainerResolver.getService(project, value);
+
+        if (service != null) {
+            return phpIndex.getClassesByFQN(service.getClassName());
         }
 
         return Collections.emptySet();
