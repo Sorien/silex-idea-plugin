@@ -1,9 +1,9 @@
 package sk.sorien.silexplugin.pimple;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.util.SmartFMap;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
@@ -11,14 +11,14 @@ import java.util.Map;
  */
 public class ContainerResolver {
 
-    private static final IdentityHashMap<Project, Container> containers = new IdentityHashMap<Project, Container>();
+    private static SmartFMap<Project, Container> containers = SmartFMap.emptyMap();
 
     public static void putContainer(Project project, Container container) {
-        containers.put(project, container);
+        containers = containers.plus(project, container);
     }
 
     public static void removeContainer(Project project) {
-        containers.remove(project);
+        containers = containers.minus(project);
     }
 
     @Nullable
@@ -38,5 +38,4 @@ public class ContainerResolver {
     public static Map<String, Parameter> getParameters(Project project) {
         return containers.get(project).getParameters();
     }
-
 }
