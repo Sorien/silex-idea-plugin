@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="https://github.com/Sorien/silex-idea-plugin">
   <id>sk.sorien.silex.plugin.id</id>
   <name>Silex Plugin</name>
-  <version>0.9.5</version>
+  <version>0.9.6</version>
   <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
 
   <description><![CDATA[

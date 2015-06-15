@@ -1,3 +1,10 @@
-# Idea plugin for Silex Framework
+IntelliJ IDEA / PhpStorm plugin for Silex Framework
+===================
 
-Program needs pimple.json file to exists inside project root directory, you can use this provider (https://github.com/Sorien/silex-pimple-dumper) to create it. 
+Provides missing [Pimple Dependency Injection Container](http://pimple.sensiolabs.org/) autocomplete for [Silex](http://silex.sensiolabs.org/).
+Plugin url: https://plugins.jetbrains.com/plugin/7809?pr=idea
+
+Installation and Usage
+------------
+Install the plugin from JetBrains repositories (Settings ? Plugins ? Browse repositories and search for Silex).
+Download and register [Silex Pimple Dumper](https://github.com/Sorien/silex-pimple-dumper), it will create **pimple.json** file to your project root directory, plugin will use this file for service/parameter type resolution.
