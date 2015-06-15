@@ -69,7 +69,7 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) element, "extend", 0)) {
+            if (!Utils.isFirstParameterOfPimpleContainerMethod((StringLiteralExpression) element)) {
                 return;
             }
 

@@ -52,14 +52,14 @@ public class Utils {
         return Utils.extendsPimpleContainerClass(phpClass);
     }
 
-    public static Boolean isArgumentOfPimpleContainerMethod(StringLiteralExpression stringLiteralExpression, String methodName, Integer parameterIndex) {
+    public static Boolean isFirstParameterOfPimpleContainerMethod(StringLiteralExpression stringLiteralExpression) {
         PsiElement parameterList = stringLiteralExpression.getParent();
         if (!(parameterList instanceof ParameterList)) {
             return false;
         }
 
         PsiElement[] params = ((ParameterList) parameterList).getParameters();
-        if (!(params.length > parameterIndex && params[parameterIndex].isEquivalentTo(stringLiteralExpression))) {
+        if (!(params.length > 0 && params[0].isEquivalentTo(stringLiteralExpression))) {
             return false;
         }
 
@@ -68,9 +68,9 @@ public class Utils {
             return false;
         }
 
-        // we have extend method
+        // we have extend/raw method
         String methodReferenceName = ((MethodReference) methodReference).getName();
-        if ((methodReferenceName == null) || (!methodReferenceName.equals(methodName))) {
+        if ((methodReferenceName == null) || !(methodReferenceName.equals("extend") || methodReferenceName.equals("raw"))) {
             return false;
         }
 

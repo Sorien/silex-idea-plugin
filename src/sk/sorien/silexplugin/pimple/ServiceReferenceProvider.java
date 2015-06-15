@@ -26,7 +26,7 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
         }
 
         if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) psiElement)) {
-            if (!Utils.isArgumentOfPimpleContainerMethod((StringLiteralExpression) psiElement, "extend", 0)) {
+            if (!Utils.isFirstParameterOfPimpleContainerMethod((StringLiteralExpression) psiElement)) {
                 return new PsiReference[0];
             }
         }
