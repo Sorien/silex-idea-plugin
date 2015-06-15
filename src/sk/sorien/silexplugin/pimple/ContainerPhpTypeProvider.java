@@ -31,7 +31,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return signature;
         }
 
-        signature = getTypeForParametersOfExtendMethodAnonymousFunction(e);
+        signature = getTypeForParameterOfAnonymousFunction(e);
         if (signature != null) {
             return signature;
         }
@@ -97,7 +97,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return signature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
     }
 
-    private String getTypeForParametersOfExtendMethodAnonymousFunction(PsiElement e) {
+    private String getTypeForParameterOfAnonymousFunction(PsiElement e) {
 
         if (!(e instanceof com.jetbrains.php.lang.psi.elements.Parameter)) {
             return null;
@@ -107,7 +107,6 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         if (!(element instanceof ParameterList)) {
             return  null;
         }
-
 
         PsiElement[] anonymousFunctionParams = ((ParameterList) element).getParameters();
 
@@ -120,40 +119,46 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        element = element.getParent();
-        if (!(element instanceof PhpExpression)) {
+        PsiElement closure = element.getParent();
+        if (!(closure instanceof PhpExpression)) {
             return null;
         }
 
-        PsiElement closure = element;
+        String serviceName = "";
 
-        element = element.getParent();
-        if (!(element instanceof ParameterList)) {
-            return null;
-        }
+        element = closure.getParent();
 
-        PsiElement[] methodParams = ((ParameterList) element).getParameters();
-        if (methodParams.length == 0) {
-            return null;
-        }
+        if (element instanceof ParameterList) {
 
-        element = element.getParent();
-        if (!(element instanceof MethodReference)) {
-            return null;
-        }
+            PsiElement[] methodParams = ((ParameterList) element).getParameters();
+            if (methodParams.length == 0) {
+                return null;
+            }
 
-        String methodName = ((MethodReference) element).getName();
-        if (methodName == null) {
-            return null;
-        }
+            element = element.getParent();
+            if (!(element instanceof MethodReference)) {
+                return null;
+            }
 
-        String serviceName;
+            String methodName = ((MethodReference) element).getName();
+            if (methodName == null) {
+                return null;
+            }
 
-        if ((methodName.equals("factory") || methodName.equals("share")) && (methodParams.length == 1) && (methodParams[0].isEquivalentTo(closure)) && (anonymousFunctionParams[0].isEquivalentTo(e))) {
-            serviceName = "";
+            if ((methodName.equals("factory") || methodName.equals("share")) && (methodParams.length == 1) && (methodParams[0].isEquivalentTo(closure)) && (anonymousFunctionParams[0].isEquivalentTo(e))) {
+                serviceName = "";
 
-        } else if (methodName.equals("extend") && (methodParams.length == 2) && (methodParams[1].isEquivalentTo(closure))) {
-            serviceName = anonymousFunctionParams.length != 2 || anonymousFunctionParams[1].isEquivalentTo(e) ? "" : ((StringLiteralExpression)methodParams[0]).getContents();
+            } else if (methodName.equals("extend") && (methodParams.length == 2) && (methodParams[1].isEquivalentTo(closure))) {
+                serviceName = anonymousFunctionParams.length != 2 || anonymousFunctionParams[1].isEquivalentTo(e) ? "" : ((StringLiteralExpression)methodParams[0]).getContents();
+
+            } else return null;
+
+        } else if (element instanceof AssignmentExpression) {
+
+            element = PsiTreeUtil.getChildOfAnyType(element, ArrayAccessExpression.class);
+            if (element == null) {
+                return null;
+            }
 
         } else return null;
 
