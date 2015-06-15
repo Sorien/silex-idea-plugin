@@ -12,7 +12,7 @@
   <change-notes><![CDATA[
     <h2>0.9.6</h2>
     <ul>
-      <li>Resolve extend anonymous function parameters</li>
+      <li>Resolve anonymous function parameters inside extend/factory/share method</li>
       <li>Raw method autocomplete</li>
     </ul>
     <h2>0.9.5</h2>

@@ -108,17 +108,11 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return  null;
         }
 
-        Boolean includeServiceName = true;
 
-        PsiElement[] params = ((ParameterList) element).getParameters();
-        // is first argument
-        if (!(params.length > 0 && params[0].isEquivalentTo(e))) {
-            // is second argument
-            if (!(params.length > 1 && params[1].isEquivalentTo(e))) {
-                return null;
-            }
+        PsiElement[] anonymousFunctionParams = ((ParameterList) element).getParameters();
 
-            includeServiceName = false;
+        if (anonymousFunctionParams.length == 0) {
+            return null;
         }
 
         element = element.getParent();
@@ -131,15 +125,15 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        PsiElement closureReference = element;
+        PsiElement closure = element;
 
         element = element.getParent();
         if (!(element instanceof ParameterList)) {
             return null;
         }
 
-        params = ((ParameterList) element).getParameters();
-        if (!(params.length > 1 && params[1].isEquivalentTo(closureReference))) {
+        PsiElement[] methodParams = ((ParameterList) element).getParameters();
+        if (methodParams.length == 0) {
             return null;
         }
 
@@ -148,11 +142,20 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        // we have extend method
-        String methodReferenceName = ((MethodReference) element).getName();
-        if ((methodReferenceName == null) || (!methodReferenceName.equals("extend"))) {
+        String methodName = ((MethodReference) element).getName();
+        if (methodName == null) {
             return null;
         }
+
+        String serviceName;
+
+        if ((methodName.equals("factory") || methodName.equals("share")) && (methodParams.length == 1) && (methodParams[0].isEquivalentTo(closure)) && (anonymousFunctionParams[0].isEquivalentTo(e))) {
+            serviceName = "";
+
+        } else if (methodName.equals("extend") && (methodParams.length == 2) && (methodParams[1].isEquivalentTo(closure))) {
+            serviceName = anonymousFunctionParams.length != 2 || anonymousFunctionParams[1].isEquivalentTo(e) ? "" : ((StringLiteralExpression)methodParams[0]).getContents();
+
+        } else return null;
 
         String signature = "";
 
@@ -174,7 +177,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        return signature + ( includeServiceName ? '[' + ((StringLiteralExpression)params[0]).getContents() + ']' : "");
+        return signature + ( serviceName.isEmpty() ? "" : '[' + serviceName + ']');
     }
 
     @Override
