@@ -1,9 +1,12 @@
 package sk.sorien.silexplugin.pimple;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -152,5 +155,53 @@ public class Utils {
         }
 
         return (PhpClass)element;
+    }
+
+    public static String getStringValue(@Nullable PsiElement psiElement) {
+        return getStringValue(psiElement, 0);
+    }
+
+    @Nullable
+    private static String getStringValue(@Nullable PsiElement psiElement, int depth) {
+
+        if (psiElement == null || ++depth > 5) {
+            return null;
+        }
+
+        if (psiElement instanceof StringLiteralExpression) {
+            String resolvedString = ((StringLiteralExpression) psiElement).getContents();
+            if (StringUtils.isEmpty(resolvedString)) {
+                return null;
+            }
+
+            return resolvedString;
+        }
+
+        if (psiElement instanceof Field) {
+            return getStringValue(((Field) psiElement).getDefaultValue(), depth);
+        }
+
+        if (psiElement instanceof PhpReference) {
+
+            PsiReference psiReference = psiElement.getReference();
+            if (psiReference == null) {
+                return null;
+            }
+
+            PsiElement ref = psiReference.resolve();
+            if (ref instanceof PhpReference) {
+                return getStringValue(psiElement, depth);
+            }
+
+            if (ref instanceof Field) {
+                PsiElement resolved = ((Field) ref).getDefaultValue();
+
+                if (resolved instanceof StringLiteralExpression) {
+                    return ((StringLiteralExpression) resolved).getContents();
+                }
+            }
+        }
+
+        return null;
     }
 }

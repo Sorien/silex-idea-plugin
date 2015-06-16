@@ -89,12 +89,18 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        PsiElement stringLiteralExpression = arrayIndex.getValue();
-        if ((stringLiteralExpression == null) || !(stringLiteralExpression instanceof StringLiteralExpression)) {
-            return null;
+        PsiElement element = arrayIndex.getValue();
+        String serviceName = "";
+        
+        if (element instanceof StringLiteralExpression) {
+            serviceName = ((StringLiteralExpression) element).getContents();
         }
+        else if (element instanceof MemberReference) {
+            serviceName = ((MemberReference) element).getSignature();
+        }
+        else return null;
 
-        return signature + '[' + (internalResolve ? "@" : "") + ((StringLiteralExpression) stringLiteralExpression).getContents() + ']';
+        return signature + '[' + (internalResolve ? "@" : "") + serviceName + ']';
     }
 
     private String getTypeForParameterOfAnonymousFunction(PsiElement e) {
@@ -207,36 +213,56 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         PhpClass phpclass = Utils.getPhpClassFromSignature(phpIndex, signature);
 
         if (Utils.extendsPimpleContainerClass(phpclass)) {
-            return resolveElement(project, phpIndex, parameter);
+            String className = getClassNameFromParameter(project, resolveParameter(phpIndex, parameter));
+
+            if (!className.isEmpty()) {
+                return phpIndex.getClassesByFQN(className);
+            }
         }
 
         return Collections.emptySet();
     }
 
-    private Collection<? extends PhpNamedElement> resolveElement(Project project, PhpIndex phpIndex, String value) {
+    private String getClassNameFromParameter(Project project, String parameter) {
 
-        if (value.isEmpty()) {
-            return Collections.emptySet();
+        if (parameter.isEmpty()) {
+            return "";
         }
 
-        if (value.startsWith("@")) {
+        if (parameter.startsWith("@")) {
 
-            Parameter parameter = ContainerResolver.getParameter(project, value.substring(1));
+            Parameter param = ContainerResolver.getParameter(project, parameter.substring(1));
+            return param != null ? param.getValue() : "";
+        }
 
-            if (parameter != null) {
-                return phpIndex.getClassesByFQN(parameter.getValue());
+        Service service = ContainerResolver.getService(project, parameter);
+        return service != null ? service.getClassName() : "";
+    }
+
+    private String resolveParameter(PhpIndex phpIndex, String parameter) {
+
+        // PHP 5.5 class constant: workaround since signature has empty type
+        // #K#C\Class\Foo.
+        if(parameter.startsWith("#K#C") && parameter.endsWith(".")) {
+            return parameter.substring(4, parameter.length() - 1);
+        }
+
+        // #P#C\Class\Foo.property
+        // #K#C\Class\Foo.CONST
+        if(parameter.startsWith("#")) {
+
+            Collection<? extends PhpNamedElement> signTypes = phpIndex.getBySignature(parameter, null, 0);
+            if(signTypes.size() == 0) {
+                return "";
             }
 
-            return Collections.emptySet();
+            parameter = Utils.getStringValue(signTypes.iterator().next());
+            if(parameter == null) {
+                return "";
+            }
         }
 
-        Service service = ContainerResolver.getService(project, value);
-
-        if (service != null) {
-            return phpIndex.getClassesByFQN(service.getClassName());
-        }
-
-        return Collections.emptySet();
+        return parameter;
     }
 }
 

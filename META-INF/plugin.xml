@@ -10,6 +10,10 @@
   ]]></description>
 
   <change-notes><![CDATA[
+    <h2>0.9.7</h2>
+    <ul>
+      <li>Resolve constants in ArrayAccess</li>
+    </ul>
     <h2>0.9.6</h2>
     <ul>
       <li>Resolve anonymous function parameters inside extend/factory/share method</li>
