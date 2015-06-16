@@ -139,7 +139,7 @@ public class Utils {
 
         if (!(element instanceof PhpClass)) {
 
-            if (!(element instanceof Field)) {
+            if (!((element instanceof Field) || (element instanceof Method))) {
                 return null;
             }
 
