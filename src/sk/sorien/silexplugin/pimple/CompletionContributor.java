@@ -29,7 +29,6 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    ProcessingContext context,
                                    @NotNull CompletionResultSet resultSet) {
 
-
             PsiElement element = parameters.getPosition().getParent();
 
             if(!SilexProjectComponent.isEnabled(element.getProject())) {

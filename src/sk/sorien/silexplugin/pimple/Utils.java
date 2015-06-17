@@ -50,7 +50,7 @@ public class Utils {
         }
 
         PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
-        return Utils.extendsPimpleContainerClass(phpIndex, signature);
+        return Utils.isPimpleContainerClass(phpIndex, signature);
     }
 
     public static Boolean isFirstParameterOfPimpleContainerMethod(StringLiteralExpression stringLiteralExpression) {
@@ -96,10 +96,10 @@ public class Utils {
         }
 
         PhpIndex phpIndex = PhpIndex.getInstance(stringLiteralExpression.getProject());
-        return Utils.extendsPimpleContainerClass(phpIndex, signature);
+        return Utils.isPimpleContainerClass(phpIndex, signature);
     }
 
-    public static Boolean extendsPimpleContainerClass(PhpClass phpClass) {
+    public static Boolean isPimpleContainerClass(PhpClass phpClass) {
 
         if (phpClass == null) {
             return false;
@@ -124,7 +124,7 @@ public class Utils {
         return className != null && (className.equals("\\Silex\\Application") || className.equals("\\Pimple\\Container") || className.equals("\\Pimple"));
     }
 
-    public static Boolean extendsPimpleContainerClass(PhpIndex phpIndex, String signature) {
+    public static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature) {
 
         Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature, null, 0);
         if (collection.size() == 0) {
@@ -134,7 +134,7 @@ public class Utils {
         PhpNamedElement element = collection.iterator().next();
 
         if (element instanceof PhpClass) {
-            return extendsPimpleContainerClass((PhpClass)element);
+            return isPimpleContainerClass((PhpClass) element);
         }
 
         if ((element instanceof Field) || (element instanceof Method)) {
@@ -149,7 +149,7 @@ public class Utils {
                 element = collection.iterator().next();
 
                 if (element instanceof PhpClass) {
-                    if (extendsPimpleContainerClass((PhpClass)element)) {
+                    if (isPimpleContainerClass((PhpClass) element)) {
                         return true;
                     }
                 }
