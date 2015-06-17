@@ -208,7 +208,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         Signature signature = new Signature(expression);
         if (!signature.hasParameters()) {
-            phpIndex.getBySignature(expression);
+            return phpIndex.getBySignature(expression);
         }
 
         if (Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
