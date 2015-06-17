@@ -67,12 +67,20 @@ public class Utils {
             }
 
             PsiElement arrayIndexElement = arrayIndex.getValue();
-            // todo [\foo\faa::class]['<carret>']
-            if (!(arrayIndexElement instanceof StringLiteralExpression)) {
+            if (arrayIndexElement == null) {
                 return null;
             }
 
-            String containerName = ((StringLiteralExpression) arrayIndexElement).getContents();
+            String containerName = "";
+
+            if (arrayIndexElement instanceof StringLiteralExpression) {
+                containerName = ((StringLiteralExpression) arrayIndexElement).getContents();
+            }
+            else if (arrayIndexElement instanceof MemberReference) {
+                containerName = resolveParameter(PhpIndex.getInstance(stringLiteralExpression.getProject()), ((MemberReference) arrayIndexElement).getSignature());
+            }
+            else return null;
+
             container = container.getContainers().get(containerName);
             if (container == null) {
                 return null;
@@ -236,5 +244,31 @@ public class Utils {
         }
 
         return null;
+    }
+
+    public static String resolveParameter(PhpIndex phpIndex, String parameter) {
+
+        // PHP 5.5 class constant: workaround since signature has empty type
+        // #K#C\Class\Foo.
+        if(parameter.startsWith("#K#C") && parameter.endsWith(".")) {
+            return parameter.substring(4, parameter.length() - 1);
+        }
+
+        // #P#C\Class\Foo.property
+        // #K#C\Class\Foo.CONST
+        if(parameter.startsWith("#")) {
+
+            Collection<? extends PhpNamedElement> signTypes = phpIndex.getBySignature(parameter, null, 0);
+            if(signTypes.size() == 0) {
+                return "";
+            }
+
+            parameter = Utils.getStringValue(signTypes.iterator().next());
+            if(parameter == null) {
+                return "";
+            }
+        }
+
+        return parameter;
     }
 }

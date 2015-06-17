@@ -228,13 +228,13 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         String parameter = "";
 
         for (int i = 0; i < parameters.size() - 1; i++) {
-            parameter = resolveParameter(phpIndex, parameters.get(i));
+            parameter = Utils.resolveParameter(phpIndex, parameters.get(i));
             container = container.getContainers().get(parameter);
             if (container == null)
                 return "";
         }
 
-        parameter = resolveParameter(phpIndex, parameters.get(parameters.size() - 1));
+        parameter = Utils.resolveParameter(phpIndex, parameters.get(parameters.size() - 1));
 
         if (parameter.startsWith("@")) {
 
@@ -244,32 +244,6 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         Service service = container.getServices().get(parameter);
         return service != null ? service.getClassName() : "";
-    }
-
-    private String resolveParameter(PhpIndex phpIndex, String parameter) {
-
-        // PHP 5.5 class constant: workaround since signature has empty type
-        // #K#C\Class\Foo.
-        if(parameter.startsWith("#K#C") && parameter.endsWith(".")) {
-            return parameter.substring(4, parameter.length() - 1);
-        }
-
-        // #P#C\Class\Foo.property
-        // #K#C\Class\Foo.CONST
-        if(parameter.startsWith("#")) {
-
-            Collection<? extends PhpNamedElement> signTypes = phpIndex.getBySignature(parameter, null, 0);
-            if(signTypes.size() == 0) {
-                return "";
-            }
-
-            parameter = Utils.getStringValue(signTypes.iterator().next());
-            if(parameter == null) {
-                return "";
-            }
-        }
-
-        return parameter;
     }
 }
 
