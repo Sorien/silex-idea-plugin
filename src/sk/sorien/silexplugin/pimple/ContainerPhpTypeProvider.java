@@ -210,9 +210,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         String signature = expression.substring(0, openBraceletIndex);
         String parameter = expression.substring(openBraceletIndex + 1, closeBraceletIndex);
 
-        PhpClass phpclass = Utils.getPhpClassFromSignature(phpIndex, signature);
-
-        if (Utils.extendsPimpleContainerClass(phpclass)) {
+        if (Utils.extendsPimpleContainerClass(phpIndex, signature)) {
             String className = getClassNameFromParameter(project, resolveParameter(phpIndex, parameter));
 
             if (!className.isEmpty()) {

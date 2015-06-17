@@ -50,9 +50,7 @@ public class Utils {
         }
 
         PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
-        PhpClass phpClass = getPhpClassFromSignature(phpIndex, signature);
-
-        return Utils.extendsPimpleContainerClass(phpClass);
+        return Utils.extendsPimpleContainerClass(phpIndex, signature);
     }
 
     public static Boolean isFirstParameterOfPimpleContainerMethod(StringLiteralExpression stringLiteralExpression) {
@@ -98,9 +96,7 @@ public class Utils {
         }
 
         PhpIndex phpIndex = PhpIndex.getInstance(stringLiteralExpression.getProject());
-        PhpClass phpClass = getPhpClassFromSignature(phpIndex, signature);
-
-        return Utils.extendsPimpleContainerClass(phpClass);
+        return Utils.extendsPimpleContainerClass(phpIndex, signature);
     }
 
     public static Boolean extendsPimpleContainerClass(PhpClass phpClass) {
@@ -128,33 +124,39 @@ public class Utils {
         return className != null && (className.equals("\\Silex\\Application") || className.equals("\\Pimple\\Container") || className.equals("\\Pimple"));
     }
 
-    public static PhpClass getPhpClassFromSignature(PhpIndex phpIndex, String signature) {
+    public static Boolean extendsPimpleContainerClass(PhpIndex phpIndex, String signature) {
 
-        Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(signature, null, 0);
-        if (classElementCollections.size() == 0) {
-            return null;
+        Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature, null, 0);
+        if (collection.size() == 0) {
+            return false;
         }
 
-        PhpNamedElement element = classElementCollections.iterator().next();
+        PhpNamedElement element = collection.iterator().next();
 
-        if (!(element instanceof PhpClass)) {
+        if (element instanceof PhpClass) {
+            return extendsPimpleContainerClass((PhpClass)element);
+        }
 
-            if (!((element instanceof Field) || (element instanceof Method))) {
-                return null;
-            }
+        if ((element instanceof Field) || (element instanceof Method)) {
 
-            classElementCollections = phpIndex.getClassesByFQN(element.getType().toString());
-            if (classElementCollections.size() == 0) {
-                return null;
-            }
+            for (String type : element.getType().getTypes()) {
 
-            element = classElementCollections.iterator().next();
-            if (!(element instanceof PhpClass)) {
-                return null;
+                collection = phpIndex.getClassesByFQN(type);
+                if (collection.size() == 0) {
+                    continue;
+                }
+
+                element = collection.iterator().next();
+
+                if (element instanceof PhpClass) {
+                    if (extendsPimpleContainerClass((PhpClass)element)) {
+                        return true;
+                    }
+                }
             }
         }
 
-        return (PhpClass)element;
+        return false;
     }
 
     public static String getStringValue(@Nullable PsiElement psiElement) {
