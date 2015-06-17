@@ -21,21 +21,7 @@ public class ContainerResolver {
         containers = containers.minus(project);
     }
 
-    @Nullable
-    public static Service getService(Project project, String serviceName) {
-        return getServices(project).get(serviceName);
-    }
-
-    public static Map<String, Service> getServices(Project project) {
-        return containers.get(project).getServices();
-    }
-
-    @Nullable
-    public static Parameter getParameter(Project project, String parameterName) {
-        return getParameters(project).get(parameterName);
-    }
-
-    public static Map<String, Parameter> getParameters(Project project) {
-        return containers.get(project).getParameters();
+    public static Container get(Project project) {
+        return containers.get(project);
     }
 }

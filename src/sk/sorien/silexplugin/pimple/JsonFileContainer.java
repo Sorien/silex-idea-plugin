@@ -18,6 +18,7 @@ public class JsonFileContainer extends Container {
 
     private long lastModified = 0;
     private final File file;
+    private final JSONParser jsonParser = new JSONParser();
 
     public JsonFileContainer(Project project) {
         super(project);
@@ -36,6 +37,12 @@ public class JsonFileContainer extends Container {
         return super.getParameters();
     }
 
+    @Override
+    public Map<String, Container> getContainers() {
+        Load();
+        return super.getContainers();
+    }
+
     private void Load() {
 
         if (file.exists() && file.lastModified() != lastModified && parse()) {
@@ -43,29 +50,44 @@ public class JsonFileContainer extends Container {
         }
     }
 
+    private boolean parseContainer(Container container, JSONArray elements) {
+
+        container.services.clear();
+        container.parameters.clear();
+        container.containers.clear();
+
+        for (Object element1 : elements) {
+            JSONObject element = (JSONObject) element1;
+            String name = element.get("name").toString();
+            String type = element.get("type").toString();
+            String value = element.get("value").toString();
+
+            if (type.equals("class")) {
+                container.services.put(name, (new Service(name, value)));
+            }
+            else if (type.equals("container")) {
+
+                Container subContainer = new Container(project);
+                try {
+                    parseContainer(subContainer, (JSONArray) jsonParser.parse(value));
+                } catch (ParseException e) {
+                    return false;
+                }
+
+                container.containers.put(name, subContainer);
+            }
+            else {
+                container.parameters.put(name, new Parameter(name, parameterFromString(type), value));
+            }
+        }
+
+        return true;
+    }
+
     private Boolean parse() {
         try {
             FileReader reader = new FileReader(file);
-            JSONParser jsonParser = new JSONParser();
-            JSONArray elements = (JSONArray) jsonParser.parse(reader);
-
-            services.clear();
-            parameters.clear();
-
-            for (Object element1 : elements) {
-                JSONObject element = (JSONObject) element1;
-                String name = element.get("name").toString();
-                String type = element.get("type").toString();
-                String value = element.get("value").toString();
-
-                if (type.equals("class")) {
-                    services.put(name, (new Service(name, value)));
-                } else {
-                    parameters.put(name, new Parameter(name, parameterFromString(type), value));
-                }
-            }
-
-            return true;
+            return parseContainer(this, (JSONArray) jsonParser.parse(reader));
 
         } catch (FileNotFoundException ex) {
             return false;

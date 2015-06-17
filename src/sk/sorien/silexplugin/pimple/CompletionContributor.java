@@ -29,7 +29,6 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                                    ProcessingContext context,
                                    @NotNull CompletionResultSet resultSet) {
 
-
             PsiElement element = parameters.getPosition().getParent();
 
             if(!SilexProjectComponent.isEnabled(element.getProject())) {
@@ -40,17 +39,20 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) element)) {
+            Container container = Utils.getContainerFromArrayAccessLiteral((StringLiteralExpression) element);
+            if (container == null) {
                 return;
             }
 
-            for (Service service : ContainerResolver.getServices(element.getProject()).values()) {
+            for (Service service : container.getServices().values()) {
                 resultSet.addElement(new ServiceLookupElement(service));
             }
 
-            for (Parameter parameter : ContainerResolver.getParameters(element.getProject()).values()) {
+            for (Parameter parameter : container.getParameters().values()) {
                 resultSet.addElement(new ParameterLookupElement(parameter));
             }
+
+            //todo containers
         }
     }
 
@@ -73,11 +75,11 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            for (Service service : ContainerResolver.getServices(element.getProject()).values()) {
+            for (Service service : ContainerResolver.get(element.getProject()).getServices().values()) {
                 resultSet.addElement(new ServiceLookupElement(service));
             }
 
-            for (Parameter parameter : ContainerResolver.getParameters(element.getProject()).values()) {
+            for (Parameter parameter : ContainerResolver.get(element.getProject()).getParameters().values()) {
                 resultSet.addElement(new ParameterLookupElement(parameter));
             }
         }

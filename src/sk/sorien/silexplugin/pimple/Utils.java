@@ -17,23 +17,31 @@ public class Utils {
 
     public static final String ARRAY_SIGNATURE = "#C\\array";
 
-    public static Boolean isArrayAccessLiteralOfPimpleContainer(StringLiteralExpression stringLiteralExpression) {
+    public static Container getContainerFromArrayAccessLiteral(StringLiteralExpression stringLiteralExpression) {
 
         PsiElement element = stringLiteralExpression.getParent();
         if (!(element instanceof ArrayIndex)) {
-            return false;
+            return null;
         }
 
-        element = element.getParent();
-        if (!(element instanceof ArrayAccessExpression)) {
-            return false;
+        PsiElement baseArrayAccessElement = element.getParent();
+        if (!(baseArrayAccessElement instanceof ArrayAccessExpression)) {
+            return null;
         }
 
+        // find deepest ArrayAccessExpression
+        PsiElement children;
+        element = baseArrayAccessElement;
+        while ((children = PsiTreeUtil.getChildOfAnyType(element, ArrayAccessExpression.class)) != null) {
+            element = children;
+        }
+
+        // check if var is pimple container
         String signature = "";
 
         PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class);
         if (signatureElement == null) {
-            return false;
+            return null;
         }
 
         if (signatureElement instanceof Variable) {
@@ -44,15 +52,36 @@ public class Utils {
             signature = ((FieldReference)signatureElement).getSignature();
         }
 
-        // skip simple \array
-        if (signature.equals(Utils.ARRAY_SIGNATURE)) {
-            return false;
+        if (!Utils.isPimpleContainerClass(PhpIndex.getInstance(stringLiteralExpression.getProject()), signature)) {
+            return null;
         }
 
-        PhpIndex phpIndex = PhpIndex.getInstance(element.getProject());
-        PhpClass phpClass = getPhpClassFromSignature(phpIndex, signature);
+        Container container = ContainerResolver.get(stringLiteralExpression.getProject());
 
-        return Utils.extendsPimpleContainerClass(phpClass);
+        // find proper container
+        while (!element.isEquivalentTo(baseArrayAccessElement) ) {
+
+            ArrayIndex arrayIndex = ((ArrayAccessExpression)element).getIndex();
+            if (arrayIndex == null) {
+                return null;
+            }
+
+            PsiElement arrayIndexElement = arrayIndex.getValue();
+            // todo [\foo\faa::class]['<carret>']
+            if (!(arrayIndexElement instanceof StringLiteralExpression)) {
+                return null;
+            }
+
+            String containerName = ((StringLiteralExpression) arrayIndexElement).getContents();
+            container = container.getContainers().get(containerName);
+            if (container == null) {
+                return null;
+            }
+
+            element = element.getParent();
+        }
+
+        return container;
     }
 
     public static Boolean isFirstParameterOfPimpleContainerMethod(StringLiteralExpression stringLiteralExpression) {
@@ -98,12 +127,10 @@ public class Utils {
         }
 
         PhpIndex phpIndex = PhpIndex.getInstance(stringLiteralExpression.getProject());
-        PhpClass phpClass = getPhpClassFromSignature(phpIndex, signature);
-
-        return Utils.extendsPimpleContainerClass(phpClass);
+        return Utils.isPimpleContainerClass(phpIndex, signature);
     }
 
-    public static Boolean extendsPimpleContainerClass(PhpClass phpClass) {
+    public static Boolean isPimpleContainerClass(PhpClass phpClass) {
 
         if (phpClass == null) {
             return false;
@@ -128,33 +155,39 @@ public class Utils {
         return className != null && (className.equals("\\Silex\\Application") || className.equals("\\Pimple\\Container") || className.equals("\\Pimple"));
     }
 
-    public static PhpClass getPhpClassFromSignature(PhpIndex phpIndex, String signature) {
+    public static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature) {
 
-        Collection<? extends PhpNamedElement> classElementCollections = phpIndex.getBySignature(signature, null, 0);
-        if (classElementCollections.size() == 0) {
-            return null;
+        Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature, null, 0);
+        if (collection.size() == 0) {
+            return false;
         }
 
-        PhpNamedElement element = classElementCollections.iterator().next();
+        PhpNamedElement element = collection.iterator().next();
 
-        if (!(element instanceof PhpClass)) {
+        if (element instanceof PhpClass) {
+            return isPimpleContainerClass((PhpClass) element);
+        }
 
-            if (!((element instanceof Field) || (element instanceof Method))) {
-                return null;
-            }
+        if ((element instanceof Field) || (element instanceof Method)) {
 
-            classElementCollections = phpIndex.getClassesByFQN(element.getType().toString());
-            if (classElementCollections.size() == 0) {
-                return null;
-            }
+            for (String type : element.getType().getTypes()) {
 
-            element = classElementCollections.iterator().next();
-            if (!(element instanceof PhpClass)) {
-                return null;
+                collection = phpIndex.getClassesByFQN(type);
+                if (collection.size() == 0) {
+                    continue;
+                }
+
+                element = collection.iterator().next();
+
+                if (element instanceof PhpClass) {
+                    if (isPimpleContainerClass((PhpClass) element)) {
+                        return true;
+                    }
+                }
             }
         }
 
-        return (PhpClass)element;
+        return false;
     }
 
     public static String getStringValue(@Nullable PsiElement psiElement) {

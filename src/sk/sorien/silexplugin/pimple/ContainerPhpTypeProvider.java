@@ -11,6 +11,7 @@ import sk.sorien.silexplugin.SilexProjectComponent;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Stanislav Turza
@@ -64,12 +65,13 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         }
         else return null;
 
-        String signature = "";
 
-        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(arrayAccessExpression, Variable.class, FieldReference.class);
+        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(arrayAccessExpression, Variable.class, FieldReference.class, ArrayAccessExpression.class);
         if (signatureElement == null) {
             return null;
         }
+
+        String signature = "";
 
         if (signatureElement instanceof Variable) {
             signature = ((Variable)signatureElement).getSignature();
@@ -79,8 +81,12 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             signature = ((FieldReference)signatureElement).getSignature();
         }
 
+        if (signatureElement instanceof ArrayAccessExpression) {
+            signature = getTypeForArrayAccess(signatureElement);
+        }
+
         // skip simple \array
-        if (signature.equals(Utils.ARRAY_SIGNATURE)) {
+        if (signature == null || signature.equals(Utils.ARRAY_SIGNATURE)) {
             return null;
         }
 
@@ -200,20 +206,13 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         PhpIndex phpIndex = PhpIndex.getInstance(project);
 
-        int openBraceletIndex = expression.lastIndexOf('[');
-        int closeBraceletIndex = expression.lastIndexOf(']');
-
-        if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
-            return phpIndex.getBySignature(expression);
+        Signature signature = new Signature(expression);
+        if (!signature.hasParameters()) {
+            phpIndex.getBySignature(expression);
         }
 
-        String signature = expression.substring(0, openBraceletIndex);
-        String parameter = expression.substring(openBraceletIndex + 1, closeBraceletIndex);
-
-        PhpClass phpclass = Utils.getPhpClassFromSignature(phpIndex, signature);
-
-        if (Utils.extendsPimpleContainerClass(phpclass)) {
-            String className = getClassNameFromParameter(project, resolveParameter(phpIndex, parameter));
+        if (Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
+            String className = getClassNameFromParameters(phpIndex, project, signature.getParameters());
 
             if (!className.isEmpty()) {
                 return phpIndex.getClassesByFQN(className);
@@ -223,19 +222,27 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         return Collections.emptySet();
     }
 
-    private String getClassNameFromParameter(Project project, String parameter) {
+    private String getClassNameFromParameters(PhpIndex phpIndex, Project project, List<String> parameters) {
 
-        if (parameter.isEmpty()) {
-            return "";
+        Container container = ContainerResolver.get(project);
+        String parameter = "";
+
+        for (int i = 0; i < parameters.size() - 1; i++) {
+            parameter = resolveParameter(phpIndex, parameters.get(i));
+            container = container.getContainers().get(parameter);
+            if (container == null)
+                return "";
         }
+
+        parameter = resolveParameter(phpIndex, parameters.get(parameters.size() - 1));
 
         if (parameter.startsWith("@")) {
 
-            Parameter param = ContainerResolver.getParameter(project, parameter.substring(1));
+            Parameter param = container.getParameters().get(parameter.substring(1));
             return param != null ? param.getValue() : "";
         }
 
-        Service service = ContainerResolver.getService(project, parameter);
+        Service service = container.getServices().get(parameter);
         return service != null ? service.getClassName() : "";
     }
 

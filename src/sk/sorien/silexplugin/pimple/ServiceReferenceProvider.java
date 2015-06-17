@@ -25,13 +25,16 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
             return new PsiReference[0];
         }
 
-        if (!Utils.isArrayAccessLiteralOfPimpleContainer((StringLiteralExpression) psiElement)) {
-            if (!Utils.isFirstParameterOfPimpleContainerMethod((StringLiteralExpression) psiElement)) {
-                return new PsiReference[0];
-            }
+        Container container = Utils.getContainerFromArrayAccessLiteral((StringLiteralExpression) psiElement);
+        if (container == null) {
+            return new PsiReference[0];
         }
 
-        Service service = ContainerResolver.getService(psiElement.getProject(), serviceName);
+//        if (container == null && !Utils.isFirstParameterOfPimpleContainerMethod((StringLiteralExpression) psiElement)) {
+//            return new PsiReference[0];
+//        }
+
+        Service service = container.getServices().get(serviceName);
         if (service == null) {
             return new PsiReference[0];
         }

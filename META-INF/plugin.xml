@@ -12,6 +12,7 @@
   <change-notes><![CDATA[
     <h2>0.9.7</h2>
     <ul>
+      <li>SubContainer type resolution and autocomplete</li>
       <li>Resolve constants in ArrayAccess</li>
     </ul>
     <h2>0.9.6</h2>
