@@ -52,7 +52,9 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 resultSet.addElement(new ParameterLookupElement(parameter));
             }
 
-            //todo containers
+            for (String key : container.getContainers().keySet()) {
+                resultSet.addElement(new ContainerLookupElement(key));
+            }
         }
     }
 

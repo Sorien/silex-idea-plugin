@@ -10,4 +10,5 @@ import javax.swing.Icon;
 public class SilexIcons {
     public static final Icon Parameter = IconLoader.getIcon("icons/pimple-parameter.png");
     public static final Icon Service = IconLoader.getIcon("icons/pimple-service.png");
+    public static final Icon Container = IconLoader.getIcon("icons/pimple-container.png");
 }
