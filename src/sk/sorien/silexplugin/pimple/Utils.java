@@ -37,7 +37,7 @@ public class Utils {
         }
 
         // check if var is pimple container
-        String signature = "";
+        Signature signature = new Signature();
 
         PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class);
         if (signatureElement == null) {
@@ -45,18 +45,26 @@ public class Utils {
         }
 
         if (signatureElement instanceof Variable) {
-            signature = ((Variable)signatureElement).getSignature();
+            signature.set(((Variable) signatureElement).getSignature());
         }
 
         if (signatureElement instanceof FieldReference) {
-            signature = ((FieldReference)signatureElement).getSignature();
+            signature.set(((FieldReference) signatureElement).getSignature());
         }
 
-        if (!Utils.isPimpleContainerClass(PhpIndex.getInstance(stringLiteralExpression.getProject()), signature)) {
+        if (!Utils.isPimpleContainerClass(PhpIndex.getInstance(stringLiteralExpression.getProject()), signature.getClassSignature())) {
             return null;
         }
 
+        PhpIndex phpIndex = PhpIndex.getInstance(stringLiteralExpression.getProject());
         Container container = ContainerResolver.get(stringLiteralExpression.getProject());
+
+        // find proper base container from signature
+        for (String parameter : signature.getParameters()) {
+            container = container.getContainers().get(resolveParameter(phpIndex, parameter));
+            if (container == null)
+                return null;
+        }
 
         // find proper container
         while (!element.isEquivalentTo(baseArrayAccessElement) ) {
@@ -71,13 +79,13 @@ public class Utils {
                 return null;
             }
 
-            String containerName = "";
+            String containerName;
 
             if (arrayIndexElement instanceof StringLiteralExpression) {
                 containerName = ((StringLiteralExpression) arrayIndexElement).getContents();
             }
             else if (arrayIndexElement instanceof MemberReference) {
-                containerName = resolveParameter(PhpIndex.getInstance(stringLiteralExpression.getProject()), ((MemberReference) arrayIndexElement).getSignature());
+                containerName = resolveParameter(phpIndex, ((MemberReference) arrayIndexElement).getSignature());
             }
             else return null;
 

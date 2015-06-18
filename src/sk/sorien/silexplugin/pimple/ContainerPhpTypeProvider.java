@@ -96,7 +96,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         }
 
         PsiElement element = arrayIndex.getValue();
-        String serviceName = "";
+        String serviceName;
         
         if (element instanceof StringLiteralExpression) {
             serviceName = ((StringLiteralExpression) element).getContents();
@@ -207,43 +207,42 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         PhpIndex phpIndex = PhpIndex.getInstance(project);
 
         Signature signature = new Signature(expression);
-        if (!signature.hasParameters()) {
-            return phpIndex.getBySignature(expression);
+
+        if (signature.hasParameters() && Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
+            return phpIndex.getClassesByFQN(getClassNameFromParameters(phpIndex, project, signature.getParameters()));
         }
 
-        if (Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
-            String className = getClassNameFromParameters(phpIndex, project, signature.getParameters());
-
-            if (!className.isEmpty()) {
-                return phpIndex.getClassesByFQN(className);
-            }
-        }
-
-        return Collections.emptySet();
+        return phpIndex.getBySignature(signature.getClassSignature());
     }
 
     private String getClassNameFromParameters(PhpIndex phpIndex, Project project, List<String> parameters) {
 
         Container container = ContainerResolver.get(project);
-        String parameter = "";
 
         for (int i = 0; i < parameters.size() - 1; i++) {
-            parameter = Utils.resolveParameter(phpIndex, parameters.get(i));
-            container = container.getContainers().get(parameter);
+            container = container.getContainers().get(Utils.resolveParameter(phpIndex, parameters.get(i)));
             if (container == null)
-                return "";
+                return null;
         }
 
-        parameter = Utils.resolveParameter(phpIndex, parameters.get(parameters.size() - 1));
+        String parameter = Utils.resolveParameter(phpIndex, parameters.get(parameters.size() - 1));
 
         if (parameter.startsWith("@")) {
 
             Parameter param = container.getParameters().get(parameter.substring(1));
-            return param != null ? param.getValue() : "";
+            return param != null ? param.getValue() : null;
         }
 
         Service service = container.getServices().get(parameter);
-        return service != null ? service.getClassName() : "";
+        if (service != null) {
+            return service.getClassName();
+        }
+
+        if (container.getContainers().containsKey(parameter)) {
+            return "\\Pimple";
+        }
+
+        return null;
     }
 }
 
