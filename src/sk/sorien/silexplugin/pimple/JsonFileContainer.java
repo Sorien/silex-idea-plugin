@@ -45,8 +45,8 @@ public class JsonFileContainer extends Container {
 
     private void Load() {
 
-        if (file.exists() && file.lastModified() != lastModified && parse()) {
-            lastModified = file.lastModified();
+        if (file.exists() && file.lastModified() != lastModified) {
+            parse();
         }
     }
 
@@ -84,10 +84,16 @@ public class JsonFileContainer extends Container {
         return true;
     }
 
-    private Boolean parse() {
+     private synchronized Boolean parse() {
         try {
+
             FileReader reader = new FileReader(file);
-            return parseContainer(this, (JSONArray) jsonParser.parse(reader));
+            if (parseContainer(this, (JSONArray) jsonParser.parse(reader))) {
+                lastModified = file.lastModified();
+                return true;
+            }
+
+            return false;
 
         } catch (FileNotFoundException ex) {
             return false;
