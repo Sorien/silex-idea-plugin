@@ -25,7 +25,7 @@ public class ServiceLookupElement extends LookupElement {
     public void renderElement(LookupElementPresentation presentation) {
 
         presentation.setItemText(getLookupString());
-        presentation.setTypeText(service.getClassName());
+        presentation.setTypeText(service.getClassName().substring(1));
         presentation.setIcon(SilexIcons.Service);
     }
 }

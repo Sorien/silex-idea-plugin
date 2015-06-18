@@ -25,7 +25,7 @@ public class ContainerLookupElement extends LookupElement {
     public void renderElement(LookupElementPresentation presentation) {
 
         presentation.setItemText(getLookupString());
-        presentation.setTypeText("\\Pimple");
+        presentation.setTypeText("Pimple");
         presentation.setIcon(SilexIcons.Container);
     }
 }
