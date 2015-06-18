@@ -29,14 +29,14 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
         Container container = Utils.getContainerFromArrayAccessLiteral((StringLiteralExpression) psiElement);
         if (container == null) {
 
-            if (!Utils.isFirstParameterOfPimpleContainerMethod((StringLiteralExpression) psiElement)) {
+            container = Utils.getContainerForFirstParameterOfPimpleContainer((StringLiteralExpression) psiElement);
+            if (container == null) {
                 return new PsiReference[0];
             }
 
             // we cant detect if we are triggering CTRL+Click from some SubContainer or not so fallback to top most.
             container = ContainerResolver.get(psiElement.getProject());
         }
-
 
         Service service = container.getServices().get(serviceName);
         if (service == null) {

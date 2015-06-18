@@ -11,32 +11,35 @@ import java.util.Collections;
  */
 public class Signature {
 
-    private String classSignature;
+    private String classSignature = "";
     private ArrayList<String> parameters = new ArrayList<String>();
 
     public Signature(@Nullable String expression) {
-        if (expression != null) {
-            set(expression);
-        }
+        set(expression);
     }
 
     public Signature() {
-
     }
 
-    public void set(String expression) {
-        int openBraceletIndex = expression.indexOf('[');
-        int closeBraceletIndex = expression.lastIndexOf(']');
+    public void set(@Nullable String expression) {
 
-        if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
-            classSignature = expression;
-            return;
+        classSignature = "";
+        parameters.clear();
+
+        if (expression != null) {
+            int openBraceletIndex = expression.indexOf('[');
+            int closeBraceletIndex = expression.lastIndexOf(']');
+
+            if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
+                classSignature = expression;
+                return;
+            }
+
+            classSignature = expression.substring(0, openBraceletIndex);
+
+            String[] split = StringUtils.splitByWholeSeparatorPreserveAllTokens(expression.substring(openBraceletIndex + 1, closeBraceletIndex), "][");
+            Collections.addAll(parameters, split);
         }
-
-        classSignature = expression.substring(0, openBraceletIndex);
-
-        String[] split = StringUtils.split(expression.substring(openBraceletIndex + 1, closeBraceletIndex), "][");
-        Collections.addAll(parameters, split);
     }
 
     public ArrayList<String> getParameters() {
@@ -49,5 +52,16 @@ public class Signature {
 
     public Boolean hasParameters() {
         return !parameters.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        String string = classSignature;
+
+        for (String param : parameters) {
+            string = string + "[" + param + "]";
+        }
+
+        return string;
     }
 }

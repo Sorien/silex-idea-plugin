@@ -73,15 +73,16 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            if (!Utils.isFirstParameterOfPimpleContainerMethod((StringLiteralExpression) element)) {
+            Container container = Utils.getContainerForFirstParameterOfPimpleContainer((StringLiteralExpression) element);
+            if (container == null){
                 return;
             }
 
-            for (Service service : ContainerResolver.get(element.getProject()).getServices().values()) {
+            for (Service service : container.getServices().values()) {
                 resultSet.addElement(new ServiceLookupElement(service));
             }
 
-            for (Parameter parameter : ContainerResolver.get(element.getProject()).getParameters().values()) {
+            for (Parameter parameter : container.getParameters().values()) {
                 resultSet.addElement(new ParameterLookupElement(parameter));
             }
         }

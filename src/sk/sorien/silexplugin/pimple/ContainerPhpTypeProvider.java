@@ -71,22 +71,25 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        String signature = "";
+        Signature signature = new Signature();
 
         if (signatureElement instanceof Variable) {
-            signature = ((Variable)signatureElement).getSignature();
+            // skip simple \array
+            signature.set(((Variable) signatureElement).getSignature());
+            if (signature.getClassSignature().equals(Utils.ARRAY_SIGNATURE)) {
+                return null;
+            }
         }
 
         if (signatureElement instanceof FieldReference) {
-            signature = ((FieldReference)signatureElement).getSignature();
+            signature.set(((FieldReference)signatureElement).getSignature());
         }
 
         if (signatureElement instanceof ArrayAccessExpression) {
-            signature = getTypeForArrayAccess(signatureElement);
+            signature.set(getTypeForArrayAccess(signatureElement));
         }
 
-        // skip simple \array
-        if (signature == null || signature.equals(Utils.ARRAY_SIGNATURE)) {
+        if (signature.getClassSignature().isEmpty()) {
             return null;
         }
 
@@ -106,7 +109,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
         }
         else return null;
 
-        return signature + '[' + (internalResolve ? "@" : "") + serviceName + ']';
+        return signature.toString() + '[' + (internalResolve ? "@" : "") + serviceName + ']';
     }
 
     private String getTypeForParameterOfAnonymousFunction(PsiElement e) {
@@ -136,7 +139,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        String serviceName = "";
+        String serviceName = null;
 
         element = closure.getParent();
 
@@ -158,10 +161,10 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
             }
 
             if ((methodName.equals("factory") || methodName.equals("share")) && (methodParams.length == 1) && (methodParams[0].isEquivalentTo(closure)) && (anonymousFunctionParams[0].isEquivalentTo(e))) {
-                serviceName = "";
+                serviceName = null;
 
             } else if (methodName.equals("extend") && (methodParams.length == 2) && (methodParams[1].isEquivalentTo(closure))) {
-                serviceName = anonymousFunctionParams.length != 2 || anonymousFunctionParams[1].isEquivalentTo(e) ? "" : ((StringLiteralExpression)methodParams[0]).getContents();
+                serviceName = anonymousFunctionParams.length != 2 || anonymousFunctionParams[1].isEquivalentTo(e) ? null : ((StringLiteralExpression)methodParams[0]).getContents();
 
             } else return null;
 
@@ -174,27 +177,33 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         } else return null;
 
-        String signature = "";
+        Signature signature = new Signature();
 
-        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class);
+        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class, ArrayAccessExpression.class);
         if (signatureElement == null) {
             return null;
         }
 
         if (signatureElement instanceof Variable) {
-            signature = ((Variable)signatureElement).getSignature();
+            signature.set(((Variable) signatureElement).getSignature());
+
+            System.out.println(((Variable) signatureElement).getType());
         }
 
         if (signatureElement instanceof FieldReference) {
-            signature = ((FieldReference)signatureElement).getSignature();
+            signature.set(((FieldReference)signatureElement).getSignature());
+        }
+
+        if (signatureElement instanceof ArrayAccessExpression) {
+            signature.set(getTypeForArrayAccess(signatureElement));
         }
 
         // skip simple \array
-        if (signature.equals(Utils.ARRAY_SIGNATURE)) {
+        if (signature.getClassSignature().equals(Utils.ARRAY_SIGNATURE)) {
             return null;
         }
 
-        return signature + ( serviceName.isEmpty() ? "" : '[' + serviceName + ']');
+        return signature.toString() + ( serviceName == null ? "" : '[' + serviceName + ']');
     }
 
     @Override
