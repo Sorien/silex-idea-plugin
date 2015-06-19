@@ -5,6 +5,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import sk.sorien.silexplugin.SilexProjectComponent;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,9 +13,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * @author Stanislav Turza
+ */
 public class JsonFileContainer extends Container {
 
     private static final String CONTAINER_JSON_DUMP = "pimple.json";
+    private static final String CONTAINER_LOAD_ERROR = "Failed to load container definitions from " + CONTAINER_JSON_DUMP;
 
     private long lastModified = 0;
     private final File file;
@@ -50,7 +55,7 @@ public class JsonFileContainer extends Container {
         }
     }
 
-    private boolean parseContainer(Container container, JSONArray elements) {
+    private void parseContainer(Container container, JSONArray elements) throws ParseException {
 
         container.services.clear();
         container.parameters.clear();
@@ -68,11 +73,7 @@ public class JsonFileContainer extends Container {
             else if (type.equals("container")) {
 
                 Container subContainer = new Container(project);
-                try {
-                    parseContainer(subContainer, (JSONArray) jsonParser.parse(value));
-                } catch (ParseException e) {
-                    return false;
-                }
+                parseContainer(subContainer, (JSONArray) jsonParser.parse(value));
 
                 container.containers.put(name, subContainer);
             }
@@ -80,29 +81,21 @@ public class JsonFileContainer extends Container {
                 container.parameters.put(name, new Parameter(name, parameterFromString(type), value));
             }
         }
-
-        return true;
     }
 
-     private synchronized Boolean parse() {
+     private synchronized void parse() {
         try {
+            lastModified = file.lastModified();
+            parseContainer(this, (JSONArray) jsonParser.parse(new FileReader(file)));
 
-            FileReader reader = new FileReader(file);
-            if (parseContainer(this, (JSONArray) jsonParser.parse(reader))) {
-                lastModified = file.lastModified();
-                return true;
-            }
-
-            return false;
-
-        } catch (FileNotFoundException ex) {
-            return false;
-        } catch (IOException ex) {
-            return false;
-        } catch (NullPointerException ex) {
-            return false;
+        } catch (FileNotFoundException e) {
+            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
+        } catch (IOException e) {
+            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
+        } catch (NullPointerException e) {
+            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
         } catch (ParseException e) {
-            return false;
+            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
         }
     }
 

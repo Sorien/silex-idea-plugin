@@ -1,5 +1,8 @@
 package sk.sorien.silexplugin;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +30,10 @@ public class SilexProjectComponent implements com.intellij.openapi.components.Pr
 
     public static boolean isEnabled(@Nullable Project project) {
         return project != null && Configuration.getInstance(project).pluginEnabled;
+    }
+
+    public static void error(String text, Project project) {
+        Notifications.Bus.notify(new Notification("Silex Plugin", "Silex Plugin", text, NotificationType.ERROR), project);
     }
 
     public void initComponent() {
