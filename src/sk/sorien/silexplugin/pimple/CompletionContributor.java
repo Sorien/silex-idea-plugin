@@ -39,7 +39,7 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            Container container = Utils.getContainerFromArrayAccessLiteral((StringLiteralExpression) element);
+            Container container = Utils.findContainerForPimpleArrayAccessLiteral((StringLiteralExpression) element);
             if (container == null) {
                 return;
             }
@@ -73,7 +73,7 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
                 return;
             }
 
-            Container container = Utils.getContainerForFirstParameterOfPimpleContainer((StringLiteralExpression) element);
+            Container container = Utils.findContainerForFirstParameterOfPimpleMethod((StringLiteralExpression) element);
             if (container == null){
                 return;
             }

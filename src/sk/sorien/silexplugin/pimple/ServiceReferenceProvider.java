@@ -26,10 +26,10 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
             return new PsiReference[0];
         }
 
-        Container container = Utils.getContainerFromArrayAccessLiteral((StringLiteralExpression) psiElement);
+        Container container = Utils.findContainerForPimpleArrayAccessLiteral((StringLiteralExpression) psiElement);
         if (container == null) {
 
-            container = Utils.getContainerForFirstParameterOfPimpleContainer((StringLiteralExpression) psiElement);
+            container = Utils.findContainerForFirstParameterOfPimpleMethod((StringLiteralExpression) psiElement);
             if (container == null) {
                 return new PsiReference[0];
             }

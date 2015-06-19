@@ -10,11 +10,11 @@ public class ContainerResolver {
 
     private static SmartFMap<Project, Container> containers = SmartFMap.emptyMap();
 
-    public static void putContainer(Project project, Container container) {
+    public static void put(Project project, Container container) {
         containers = containers.plus(project, container);
     }
 
-    public static void removeContainer(Project project) {
+    public static void remove(Project project) {
         containers = containers.minus(project);
     }
 

@@ -18,11 +18,11 @@ public class SilexProjectComponent implements com.intellij.openapi.components.Pr
     }
 
     public void projectOpened() {
-        ContainerResolver.putContainer(project, new JsonFileContainer(project));
+        ContainerResolver.put(project, new JsonFileContainer(project));
     }
 
     public void projectClosed() {
-        ContainerResolver.removeContainer(project);
+        ContainerResolver.remove(project);
     }
 
     public static boolean isEnabled(@Nullable Project project) {

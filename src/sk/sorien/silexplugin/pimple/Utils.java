@@ -17,7 +17,7 @@ public class Utils {
 
     public static final String ARRAY_SIGNATURE = "#C\\array";
 
-    public static Container getContainerFromArrayAccess(ArrayAccessExpression arrayAccessElement, Boolean onlyParentContainers) {
+    public static Container findContainerForPimpleArrayAccess(ArrayAccessExpression arrayAccessElement, Boolean onlyParentContainers) {
 
         PsiElement children;
         PsiElement element = arrayAccessElement;
@@ -93,7 +93,7 @@ public class Utils {
 
     }
 
-    public static Container getContainerFromArrayAccessLiteral(StringLiteralExpression stringLiteralExpression) {
+    public static Container findContainerForPimpleArrayAccessLiteral(StringLiteralExpression stringLiteralExpression) {
 
         PsiElement element = stringLiteralExpression.getParent();
         if (!(element instanceof ArrayIndex)) {
@@ -102,13 +102,13 @@ public class Utils {
 
         element = element.getParent();
         if (element instanceof ArrayAccessExpression) {
-            return getContainerFromArrayAccess((ArrayAccessExpression)element, true);
+            return findContainerForPimpleArrayAccess((ArrayAccessExpression) element, true);
         }
 
         return null;
     }
 
-    public static Container getContainerForFirstParameterOfPimpleContainer(StringLiteralExpression stringLiteralExpression) {
+    public static Container findContainerForFirstParameterOfPimpleMethod(StringLiteralExpression stringLiteralExpression) {
         PsiElement parameterList = stringLiteralExpression.getParent();
         if (!(parameterList instanceof ParameterList)) {
             return null;
@@ -161,7 +161,7 @@ public class Utils {
         }
 
         if (signatureElement instanceof ArrayAccessExpression) {
-            return getContainerFromArrayAccess((ArrayAccessExpression)signatureElement, false);
+            return findContainerForPimpleArrayAccess((ArrayAccessExpression) signatureElement, false);
         }
 
         return null;
