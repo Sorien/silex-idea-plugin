@@ -164,7 +164,7 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
                 serviceName = null;
 
             } else if (methodName.equals("extend") && (methodParams.length == 2) && (methodParams[1].isEquivalentTo(closure))) {
-                serviceName = anonymousFunctionParams.length != 2 || anonymousFunctionParams[1].isEquivalentTo(e) ? null : ((StringLiteralExpression)methodParams[0]).getContents();
+                serviceName = anonymousFunctionParams[0].isEquivalentTo(e) ? ((StringLiteralExpression)methodParams[0]).getContents() : null;
 
             } else return null;
 
@@ -186,8 +186,6 @@ public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
 
         if (signatureElement instanceof Variable) {
             signature.set(((Variable) signatureElement).getSignature());
-
-            System.out.println(((Variable) signatureElement).getType());
         }
 
         if (signatureElement instanceof FieldReference) {
