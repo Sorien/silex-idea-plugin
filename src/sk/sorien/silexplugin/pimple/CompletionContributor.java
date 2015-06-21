@@ -55,6 +55,8 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
             for (String key : container.getContainers().keySet()) {
                 resultSet.addElement(new ContainerLookupElement(key));
             }
+
+            resultSet.stopHere();
         }
     }
 
@@ -85,6 +87,8 @@ public class CompletionContributor extends com.intellij.codeInsight.completion.C
             for (Parameter parameter : container.getParameters().values()) {
                 resultSet.addElement(new ParameterLookupElement(parameter));
             }
+
+            resultSet.stopHere();
         }
     }
 }
