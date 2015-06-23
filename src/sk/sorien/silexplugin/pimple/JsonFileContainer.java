@@ -68,7 +68,7 @@ public class JsonFileContainer extends Container {
             String value = element.get("value").toString();
 
             if (type.equals("class")) {
-                container.services.put(name, (new Service(name, value)));
+                container.services.put(name, (new Service(name, value, project)));
             }
             else if (type.equals("container")) {
 

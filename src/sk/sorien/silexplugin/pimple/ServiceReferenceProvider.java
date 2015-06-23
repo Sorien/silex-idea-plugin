@@ -4,13 +4,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
-import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexProjectComponent;
-
-import java.util.Collection;
 
 /**
  * @author Stanislav Turza
@@ -43,14 +40,13 @@ public class ServiceReferenceProvider extends PsiReferenceProvider {
             return new PsiReference[0];
         }
 
-        PhpIndex phpIndex = PhpIndex.getInstance(psiElement.getProject());
-        Collection<PhpClass> phpClasses = phpIndex.getClassesByFQN(service.getClassName());
+        PhpClass phpClass = service.getPhpClass();
 
-        for (PhpClass phpClass : phpClasses) {
-            ServiceReference psiReference = new ServiceReference(phpClass, (StringLiteralExpression) psiElement);
-            return new PsiReference[]{psiReference};
+        if (phpClass == null) {
+            return new PsiReference[0];
         }
 
-        return new PsiReference[0];
+        ServiceReference psiReference = new ServiceReference(phpClass, (StringLiteralExpression) psiElement);
+        return new PsiReference[]{psiReference};
     }
 }

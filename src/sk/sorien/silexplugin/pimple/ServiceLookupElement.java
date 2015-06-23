@@ -2,6 +2,7 @@ package sk.sorien.silexplugin.pimple;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexIcons;
 
@@ -27,5 +28,12 @@ public class ServiceLookupElement extends LookupElement {
         presentation.setItemText(getLookupString());
         presentation.setTypeText(service.getClassName().substring(1));
         presentation.setIcon(SilexIcons.Service);
+    }
+
+    @NotNull
+    public Object getObject() {
+
+        PhpClass phpClass = service.getPhpClass();
+        return phpClass == null ? this : phpClass;
     }
 }
