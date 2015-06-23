@@ -1,5 +1,6 @@
 package sk.sorien.silexplugin.pimple;
 
+import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
@@ -15,9 +16,9 @@ import sk.sorien.silexplugin.SilexProjectComponent;
 /**
  * @author Stanislav Turza
  */
-public class CompletionContributor extends com.intellij.codeInsight.completion.CompletionContributor {
+public class PimpleCompletionContributor extends CompletionContributor {
 
-    public CompletionContributor() {
+    public PimpleCompletionContributor() {
         // $app['<caret>']
         extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ArrayAccessCompletionProvider());
         // $app[''] = $app->extend('<caret>', ...

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author Stanislav Turza
  */
-public class ContainerPhpTypeProvider implements PhpTypeProvider2 {
+public class PimplePhpTypeProvider implements PhpTypeProvider2 {
 
     @Override
     public char getKey() {

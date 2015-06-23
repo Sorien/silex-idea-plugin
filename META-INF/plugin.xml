@@ -41,9 +41,9 @@
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <completion.contributor language="PHP" order="FIRST" implementationClass="sk.sorien.silexplugin.pimple.CompletionContributor"/>
-    <psi.referenceContributor implementation="sk.sorien.silexplugin.pimple.ServiceReferenceContributor"/>
-    <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.ContainerPhpTypeProvider"/>
+    <completion.contributor language="PHP" order="FIRST" implementationClass="sk.sorien.silexplugin.pimple.PimpleCompletionContributor"/>
+    <psi.referenceContributor implementation="sk.sorien.silexplugin.pimple.PimpleReferenceContributor"/>
+    <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.PimplePhpTypeProvider"/>
 
     <projectConfigurable instance="sk.sorien.silexplugin.ConfigurationForm" displayName="Silex Plugin"/>
     <projectService serviceImplementation="sk.sorien.silexplugin.Configuration"/>

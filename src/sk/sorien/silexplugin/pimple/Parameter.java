@@ -3,20 +3,6 @@ package sk.sorien.silexplugin.pimple;
 /**
  * @author Stanislav Turza
  */
-enum ParameterType {
-    STRING("string"), INTEGER("int"), BOOLEAN("bool"), FLOAT("float"), ARRAY("array"), CLOSURE("closure"), NULL("null"), UNKNOWN("unknown");
-
-    private final String stringValue;
-
-    ParameterType(final String s) {
-        stringValue = s;
-    }
-
-    public String toString() {
-        return stringValue;
-    }
-}
-
 public class Parameter {
 
     private final String name;

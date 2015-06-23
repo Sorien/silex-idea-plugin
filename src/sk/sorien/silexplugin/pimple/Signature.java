@@ -12,7 +12,7 @@ import java.util.Collections;
 public class Signature {
 
     private String classSignature = "";
-    private ArrayList<String> parameters = new ArrayList<String>();
+    private final ArrayList<String> parameters = new ArrayList<String>();
 
     public Signature(@Nullable String expression) {
         set(expression);

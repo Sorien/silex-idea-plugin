@@ -17,7 +17,7 @@ public class Utils {
 
     public static final String ARRAY_SIGNATURE = "#C\\array";
 
-    public static Container findContainerForPimpleArrayAccess(ArrayAccessExpression arrayAccessElement, Boolean onlyParentContainers) {
+    private static Container findContainerForPimpleArrayAccess(ArrayAccessExpression arrayAccessElement, Boolean onlyParentContainers) {
 
         PsiElement children;
         PsiElement element = arrayAccessElement;
@@ -167,7 +167,7 @@ public class Utils {
         return null;
     }
 
-    public static Boolean isPimpleContainerClass(PhpClass phpClass) {
+    private static Boolean isPimpleContainerClass(PhpClass phpClass) {
 
         if (phpClass == null) {
             return false;
@@ -232,7 +232,7 @@ public class Utils {
         return false;
     }
 
-    public static String getStringValue(@Nullable PsiElement psiElement) {
+    private static String getStringValue(@Nullable PsiElement psiElement) {
         return getStringValue(psiElement, 0);
     }
 
