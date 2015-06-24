@@ -23,13 +23,13 @@
         <fileset dir="${basedir}/plugins/php/lib">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${basedir}/plugins/CSS/lib">
-            <include name="*.jar"/>
-        </fileset>
         <fileset dir="${idea.build}/plugins/properties/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${idea.build}/plugins/java-i18n/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${idea.build}/plugins/CSS/lib">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -53,13 +53,13 @@
         <fileset dir="${basedir}/plugins/php/lib">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${basedir}/plugins/CSS/lib">
-            <include name="*.jar"/>
-        </fileset>
         <fileset dir="${idea.build}/plugins/properties/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${idea.build}/plugins/java-i18n/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${idea.build}/plugins/CSS/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${java.home}/../lib">

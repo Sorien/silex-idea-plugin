@@ -1,5 +1,6 @@
 IntelliJ IDEA / PhpStorm plugin for Silex Framework
 ===================
+[![Build Status](https://travis-ci.org/Sorien/silex-idea-plugin.svg?branch=master)](https://travis-ci.org/Sorien/silex-idea-plugin)
 
 Provides missing [Pimple Dependency Injection Container](http://pimple.sensiolabs.org/) autocomplete for [Silex](http://silex.sensiolabs.org/).  
 Plugin url: https://plugins.jetbrains.com/plugin/7809?pr=idea

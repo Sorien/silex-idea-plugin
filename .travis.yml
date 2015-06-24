@@ -2,6 +2,3 @@ language: java
 jdk:
   - openjdk6
 script: "./travis.sh"
-cache:
-  directories:
-  - idea
