@@ -2,3 +2,5 @@ language: java
 jdk:
   - openjdk6
 script: "./travis.sh"
+after_success:
+    "curl -F plugin=@silex-plugin.zip http://silex.sorien.sk/deploy/$TRAVIS_BRANCH/$UUID"
