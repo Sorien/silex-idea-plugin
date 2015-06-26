@@ -12,6 +12,7 @@
     <property name="resources" value="${basedir}/resources"/>
     <property name="idea.build" location="${basedir}/idea/" />
     <property name="plugins" location="${basedir}/plugins"/>
+    <property name="deploy" location="${basedir}/deploy"/>
 
     <path id="idea.classpath">
         <fileset dir="${idea.build}/lib">
@@ -34,12 +35,8 @@
         </fileset>
     </path>
 
-    <path id="my.classpath">
-        <pathelement location="${build}"/>
-    </path>
-
     <path id="classpath">
-        <path refid="my.classpath"/>
+        <pathelement location="${build}"/>
         <path refid="idea.classpath"/>
     </path>
 
@@ -76,6 +73,7 @@
 
     <macrodef name="copy_resources">
         <attribute name="dest"/>
+        <attribute name="src"/>
         <sequential>
             <echo message="Copying resources"/>
             <patternset id="resources">
@@ -84,10 +82,7 @@
             </patternset>
 
             <copy toDir="@{dest}">
-                <fileset dir="${src}">
-                    <patternset refid="resources"/>
-                </fileset>
-                <fileset dir="${test.src}">
+                <fileset dir="@{src}">
                     <patternset refid="resources"/>
                 </fileset>
             </copy>
@@ -112,6 +107,25 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="deploy_plugin">
+        <attribute name="src"/>
+        <sequential>
+            <mkdir dir="${deploy}"/>
+            <jar destfile="${deploy}/silex-plugin.jar" basedir="@{src}" filesonly="true">
+                <manifest>
+                    <attribute name="Built-By" value="TravisCI"/>
+                </manifest>
+            </jar>
+            <copy toDir="${deploy}">
+                <fileset dir="${basedir}/lib">
+                </fileset>
+            </copy>
+            <zip destfile="${basedir}/silex-plugin.zip">
+                <zipfileset dir="${deploy}" prefix="silex-plugin/lib"/>
+            </zip>
+        </sequential>
+    </macrodef>
+
     <target name="init">
         <tstamp/>
         <mkdir dir="${build}"/>
@@ -130,8 +144,9 @@
                 <src path="${src}"/>
             </javac2>
 
-            <copy_resources dest="${build}"/>
+            <copy_resources dest="${build}" src="${src}"/>
             <make_plugin dest="${plugins}/silex-plugin"/>
+            <deploy_plugin src="${build}"/>
         </sequential>
     </target>
 
@@ -145,7 +160,8 @@
                 <src path="${test.src}"/>
             </javac2>
 
-            <copy_resources dest="${test.build}"/>
+            <copy_resources dest="${test.build}" src="${src}"/>
+            <copy_resources dest="${test.build}" src="${test.src}"/>
         </sequential>
     </target>
 
@@ -190,6 +206,7 @@
     <target name="clean" description="clean up">
         <delete dir="${build}" />
         <delete dir="${test.build}" />
+        <delete dir="${deploy}" />
         <delete dir="${plugins}/silex-plugin" />
     </target>
 
