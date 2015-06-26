@@ -1,4 +1,4 @@
-<project name="Silex Idea Plugin" default="test" basedir=".">
+<project name="Silex Idea Plugin" default="test_and_deploy" basedir=".">
 
     <property file="build.properties" />
 
@@ -107,11 +107,33 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="deploy_plugin">
-        <attribute name="src"/>
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${test.build}"/>
+        <mkdir dir="${plugins}/silex-plugin"/>
+        <echo message="Using IDEA build from: ${idea.build}" />
+        <echo message="Using JAVA_HOME: ${java.home}" />
+    </target>
+
+    <target name="compile" depends="init" description="Compile the source code">
+
+        <sequential>
+            <pathconvert property="classpathProp" refid="classpath"/>
+
+            <javac2 destdir="${build}" classpathref="classpath" verbose="false" debug="true" source="1.6" target="1.6" includeantruntime="false">
+                <src path="${src}"/>
+            </javac2>
+
+            <copy_resources dest="${build}" src="${src}"/>
+            <make_plugin dest="${plugins}/silex-plugin"/>
+        </sequential>
+    </target>
+
+    <target name="deploy" depends="compile" description="Deploy Plugin">
         <sequential>
             <mkdir dir="${deploy}"/>
-            <jar destfile="${deploy}/silex-plugin.jar" basedir="@{src}" filesonly="true">
+            <jar destfile="${deploy}/silex-plugin.jar" basedir="${build}" filesonly="true">
                 <manifest>
                     <attribute name="Built-By" value="TravisCI"/>
                 </manifest>
@@ -123,30 +145,6 @@
             <zip destfile="${basedir}/silex-plugin.zip">
                 <zipfileset dir="${deploy}" prefix="silex-plugin/lib"/>
             </zip>
-        </sequential>
-    </macrodef>
-
-    <target name="init">
-        <tstamp/>
-        <mkdir dir="${build}"/>
-        <mkdir dir="${test.build}"/>
-        <mkdir dir="${plugins}/silex-plugin"/>
-        <echo message="Using IDEA build from: ${idea.build}" />
-        <echo message="Using JAVA_HOME: ${java.home}" />
-    </target>
-
-    <target name="compile" depends="clean,init" description="Compile the source code">
-
-        <sequential>
-            <pathconvert property="classpathProp" refid="classpath"/>
-
-            <javac2 destdir="${build}" classpathref="classpath" verbose="false" debug="true" source="1.6" target="1.6" includeantruntime="false">
-                <src path="${src}"/>
-            </javac2>
-
-            <copy_resources dest="${build}" src="${src}"/>
-            <make_plugin dest="${plugins}/silex-plugin"/>
-            <deploy_plugin src="${build}"/>
         </sequential>
     </target>
 
@@ -198,6 +196,8 @@
 
         <antcall target="check_test"/>
     </target>
+
+    <target name="test_and_deploy" depends="test, deploy"/>
 
     <target name="check_test" if="failure_found">
         <fail message="Failures found"/>
