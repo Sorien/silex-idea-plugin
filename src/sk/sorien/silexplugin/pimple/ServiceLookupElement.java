@@ -2,9 +2,13 @@ package sk.sorien.silexplugin.pimple;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.openapi.project.Project;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexIcons;
+
+import java.util.Collection;
 
 /**
  * @author Stanislav Turza
@@ -12,9 +16,11 @@ import sk.sorien.silexplugin.SilexIcons;
 public class ServiceLookupElement extends LookupElement {
 
     private final Service service;
+    private final Project project;
 
-    public ServiceLookupElement(Service service) {
+    public ServiceLookupElement(Service service, Project project) {
         this.service = service;
+        this.project = project;
     }
 
     @NotNull
@@ -33,7 +39,7 @@ public class ServiceLookupElement extends LookupElement {
     @NotNull
     public Object getObject() {
 
-        PhpClass phpClass = service.getPhpClass();
-        return phpClass == null ? this : phpClass;
+        Collection<PhpClass> classes = PhpIndex.getInstance(project).getClassesByFQN(service.getClassName());
+        return !classes.isEmpty() ? classes.iterator().next() : this;
     }
 }

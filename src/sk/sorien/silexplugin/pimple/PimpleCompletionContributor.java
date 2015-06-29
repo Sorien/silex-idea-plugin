@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
@@ -31,8 +32,9 @@ public class PimpleCompletionContributor extends CompletionContributor {
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement element = parameters.getPosition().getParent();
+            Project project = element.getProject();
 
-            if(!SilexProjectComponent.isEnabled(element.getProject())) {
+            if(!SilexProjectComponent.isEnabled(project)) {
                 return;
             }
 
@@ -46,7 +48,7 @@ public class PimpleCompletionContributor extends CompletionContributor {
             }
 
             for (Service service : container.getServices().values()) {
-                resultSet.addElement(new ServiceLookupElement(service));
+                resultSet.addElement(new ServiceLookupElement(service, project));
             }
 
             for (Parameter parameter : container.getParameters().values()) {
@@ -67,8 +69,9 @@ public class PimpleCompletionContributor extends CompletionContributor {
                                    @NotNull CompletionResultSet resultSet) {
 
             PsiElement element = parameters.getPosition().getParent();
+            Project project = element.getProject();
 
-            if(!SilexProjectComponent.isEnabled(element.getProject())) {
+            if(!SilexProjectComponent.isEnabled(project)) {
                 return;
             }
 
@@ -82,7 +85,7 @@ public class PimpleCompletionContributor extends CompletionContributor {
             }
 
             for (Service service : container.getServices().values()) {
-                resultSet.addElement(new ServiceLookupElement(service));
+                resultSet.addElement(new ServiceLookupElement(service, project));
             }
 
             for (Parameter parameter : container.getParameters().values()) {

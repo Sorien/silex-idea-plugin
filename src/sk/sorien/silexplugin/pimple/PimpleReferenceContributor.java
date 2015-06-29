@@ -3,11 +3,14 @@ package sk.sorien.silexplugin.pimple;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexProjectComponent;
+
+import java.util.Collection;
 
 /**
  * @author Stanislav Turza
@@ -48,13 +51,13 @@ public class PimpleReferenceContributor extends PsiReferenceContributor {
                 return new PsiReference[0];
             }
 
-            PhpClass phpClass = service.getPhpClass();
+            Collection<PhpClass> classes = PhpIndex.getInstance(psiElement.getProject()).getClassesByFQN(service.getClassName());
 
-            if (phpClass == null) {
+            if (classes.isEmpty()) {
                 return new PsiReference[0];
             }
 
-            ServiceReference psiReference = new ServiceReference(phpClass, (StringLiteralExpression) psiElement);
+            ServiceReference psiReference = new ServiceReference(classes.iterator().next(), (StringLiteralExpression) psiElement);
             return new PsiReference[]{psiReference};
         }
     }
