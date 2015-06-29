@@ -1,5 +1,11 @@
 <?php
 namespace Sorien {
+    class Service1 {
+    }
+
+    class Service2 {
+    }
+
     class Application extends \Silex\Application {
     }
 }
