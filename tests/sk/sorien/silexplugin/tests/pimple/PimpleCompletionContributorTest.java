@@ -21,7 +21,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
 
         // Create virtual container
         Container container = new Container(project);
-        container.put(new Container("c1", project).put(new Container("c2", project).put(new Service("s", "\\Sorien\\Service1", project))));
+        container.put(new Container("c1", project).put(new Container("c2", project).put(new Service("s", "\\Sorien\\Service1"))));
         container.put(new Parameter("c1.p", ParameterType.INTEGER, "1"));
 
         ContainerResolver.put(myFixture.getProject(), container);
