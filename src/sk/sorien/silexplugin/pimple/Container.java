@@ -1,34 +1,53 @@
 package sk.sorien.silexplugin.pimple;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.HashMap;
-
-import java.util.Map;
+import sk.sorien.silexplugin.utils.ContainerMap;
+import sk.sorien.silexplugin.utils.ContainerMapItem;
 
 /**
  * @author Stanislav Turza
  */
-public class Container {
+public class Container extends ContainerMapItem {
 
-    protected final Map<String, Service> services = new HashMap<String, Service>();
-    protected final Map<String, Parameter> parameters = new HashMap<String, Parameter>();
-    protected final Map<String, Container> containers = new HashMap<String, Container>();
+    protected final ContainerMap<Service> services = new ContainerMap<Service>();
+    protected final ContainerMap<Parameter> parameters = new ContainerMap<Parameter>();
+    protected final ContainerMap<Container> containers = new ContainerMap<Container>();
     protected final Project project;
 
     public Container(Project project) {
+        this("_unknown_", project);
+    }
+
+    public Container(String name, Project project) {
+        super(name);
         this.project = project;
     }
 
-    public Map<String, Service> getServices() {
+    public ContainerMap<Service> getServices() {
         return services;
     }
 
-    public Map<String, Parameter> getParameters() {
+    public ContainerMap<Parameter> getParameters() {
         return parameters;
     }
 
-    public Map<String, Container> getContainers() {
+    public ContainerMap<Container> getContainers() {
         return containers;
+    }
+
+    public Container put(Service value) {
+        this.getServices().put(value);
+        return this;
+    }
+
+    public Container put(Parameter value) {
+        this.getParameters().put(value);
+        return this;
+    }
+
+    public Container put(Container value) {
+        this.getContainers().put(value);
+        return this;
     }
 }
 

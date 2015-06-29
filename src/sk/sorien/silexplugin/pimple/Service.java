@@ -4,21 +4,22 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.Nullable;
+import sk.sorien.silexplugin.utils.ContainerMapItem;
 
 import java.util.Collection;
 
 /**
  * @author Stanislav Turza
  */
-public class Service {
+public class Service extends ContainerMapItem {
 
-    private final String name;
     private final String className;
     private final Project project;
     private PhpClass phpClass;
 
     public Service(String name, String className, Project project) {
-        this.name = name;
+
+        super(name);
 
         if (!className.startsWith("\\")) {
             className = "\\" + className;
@@ -26,10 +27,6 @@ public class Service {
 
         this.className = className;
         this.project = project;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getClassName() {

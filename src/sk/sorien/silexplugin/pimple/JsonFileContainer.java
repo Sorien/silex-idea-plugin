@@ -6,12 +6,12 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import sk.sorien.silexplugin.SilexProjectComponent;
+import sk.sorien.silexplugin.utils.ContainerMap;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Stanislav Turza
@@ -31,19 +31,19 @@ public class JsonFileContainer extends Container {
     }
 
     @Override
-    public Map<String, Service> getServices() {
+    public ContainerMap<Service> getServices() {
         Load();
         return super.getServices();
     }
 
     @Override
-    public Map<String, Parameter> getParameters() {
+    public ContainerMap<Parameter> getParameters() {
         Load();
         return super.getParameters();
     }
 
     @Override
-    public Map<String, Container> getContainers() {
+    public ContainerMap<Container> getContainers() {
         Load();
         return super.getContainers();
     }
@@ -68,17 +68,17 @@ public class JsonFileContainer extends Container {
             String value = element.get("value").toString();
 
             if (type.equals("class")) {
-                container.services.put(name, (new Service(name, value, project)));
+                container.put(new Service(name, value, project));
             }
             else if (type.equals("container")) {
 
-                Container subContainer = new Container(project);
+                Container subContainer = new Container(name, project);
                 parseContainer(subContainer, (JSONArray) jsonParser.parse(value));
 
-                container.containers.put(name, subContainer);
+                container.put(subContainer);
             }
             else {
-                container.parameters.put(name, new Parameter(name, parameterFromString(type), value));
+                container.put(new Parameter(name, parameterFromString(type), value));
             }
         }
     }

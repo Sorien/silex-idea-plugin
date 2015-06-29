@@ -1,22 +1,20 @@
 package sk.sorien.silexplugin.pimple;
 
+import sk.sorien.silexplugin.utils.ContainerMapItem;
+
 /**
  * @author Stanislav Turza
  */
-public class Parameter {
+public class Parameter extends ContainerMapItem {
 
-    private final String name;
     private final ParameterType type;
     private final String value;
 
     public Parameter(String name, ParameterType type, String value) {
-        this.name = name;
+
+        super(name);
         this.type = type;
         this.value = value;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public ParameterType getType() {
