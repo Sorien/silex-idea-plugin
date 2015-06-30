@@ -3,7 +3,8 @@ package sk.sorien.silexplugin.tests.spellchecker;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.php.lang.PhpFileType;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.pimple.*;
+import sk.sorien.silexplugin.pimple.Container;
+import sk.sorien.silexplugin.pimple.ContainerResolver;
 import sk.sorien.silexplugin.tests.SilexCodeInsightFixtureTestCase;
 
 import java.io.File;

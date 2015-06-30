@@ -24,12 +24,8 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
         // Create virtual container
         Container container = new Container(project);
-        Container c1 = new Container(project);
-        Container c2 = new Container(project);
-        c2.getServices().put("service1", new Service("service1", "\\Sorien\\Service1", project));
-        c1.getContainers().put("container2", c2);
-        container.getContainers().put("container1", c1);
-        container.getParameters().put("service2_class", new Parameter("service2_class", ParameterType.STRING, "\\Sorien\\Service2"));
+        container.put(new Container("container1", project).put(new Container("container2", project).put(new Service("service1", "\\Sorien\\Service1"))));
+        container.put(new Parameter("service2_class", ParameterType.STRING, "\\Sorien\\Service2"));
 
         ContainerResolver.put(myFixture.getProject(), container);
 
