@@ -79,6 +79,7 @@
             <patternset id="resources">
                 <include name="**/*.php"/>
                 <include name="**/*.png"/>
+                <include name="**/*.dic"/>
             </patternset>
 
             <copy toDir="@{dest}">

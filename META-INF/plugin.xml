@@ -47,6 +47,8 @@
 
     <projectConfigurable instance="sk.sorien.silexplugin.ConfigurationForm" displayName="Silex Plugin"/>
     <projectService serviceImplementation="sk.sorien.silexplugin.Configuration"/>
+    <spellchecker.bundledDictionaryProvider implementation="sk.sorien.silexplugin.spellchecker.SilexDictionaryProvider"/>
+    <spellchecker.support language="PHP" implementationClass="sk.sorien.silexplugin.spellchecker.SilexSpellcheckingStrategy" order="FIRST"/>
   </extensions>
 
   <project-components>
