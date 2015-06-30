@@ -1,8 +1,12 @@
 package sk.sorien.silexplugin.pimple;
 
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +20,16 @@ import java.util.Collection;
 public class Utils {
 
     public static final String ARRAY_SIGNATURE = "#C\\array";
+
+    public static final InsertHandler<LookupElement> CONTAINER_INSERT_HANDLER = new InsertHandler<LookupElement>() {
+        @Override
+        public void handleInsert(InsertionContext context, LookupElement item) {
+            PsiElement element = PsiUtilCore.getElementAtOffset(context.getFile(), context.getStartOffset());
+            context.getDocument().deleteString(context.getStartOffset() + item.getLookupString().length(), context.getStartOffset() + element.getText().length());
+            // move caret after ]
+            context.getEditor().getCaretModel().moveCaretRelatively(2, 0, false, false, true);
+        }
+    };
 
     private static Container findContainerForPimpleArrayAccess(ArrayAccessExpression arrayAccessElement, Boolean onlyParentContainers) {
 

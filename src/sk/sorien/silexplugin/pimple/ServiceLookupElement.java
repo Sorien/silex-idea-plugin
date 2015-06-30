@@ -1,5 +1,6 @@
 package sk.sorien.silexplugin.pimple;
 
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.project.Project;
@@ -41,5 +42,10 @@ public class ServiceLookupElement extends LookupElement {
 
         Collection<PhpClass> classes = PhpIndex.getInstance(project).getClassesByFQN(service.getClassName());
         return !classes.isEmpty() ? classes.iterator().next() : this;
+    }
+
+    @Override
+    public void handleInsert(InsertionContext context) {
+        Utils.CONTAINER_INSERT_HANDLER.handleInsert(context, this);
     }
 }

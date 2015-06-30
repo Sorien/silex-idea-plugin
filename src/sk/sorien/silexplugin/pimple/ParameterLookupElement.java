@@ -1,5 +1,6 @@
 package sk.sorien.silexplugin.pimple;
 
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import org.jetbrains.annotations.NotNull;
@@ -28,5 +29,10 @@ public class ParameterLookupElement extends LookupElement {
             presentation.appendTailText("(" + parameter.getValue() + ")", true);
 
         presentation.setIcon(SilexIcons.Parameter);
+    }
+
+    @Override
+    public void handleInsert(InsertionContext context) {
+        Utils.CONTAINER_INSERT_HANDLER.handleInsert(context, this);
     }
 }

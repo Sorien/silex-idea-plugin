@@ -1,5 +1,6 @@
 package sk.sorien.silexplugin.tests;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
@@ -40,5 +41,12 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
                 fail(String.format("completion %s does not contains \"%s\"", lookupElements.toString(), s));
             }
         }
+    }
+
+    public void assertCompletionResultEquals(LanguageFileType languageFileType, String configureByText, String result) {
+        myFixture.configureByText(languageFileType, configureByText);
+        myFixture.completeBasic();
+        myFixture.type("\n");
+        myFixture.checkResult(result);
     }
 }

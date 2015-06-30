@@ -1,5 +1,6 @@
 package sk.sorien.silexplugin.pimple;
 
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import org.jetbrains.annotations.NotNull;
@@ -27,5 +28,10 @@ public class ContainerLookupElement extends LookupElement {
         presentation.setItemText(getLookupString());
         presentation.setTypeText("Pimple");
         presentation.setIcon(SilexIcons.Container);
+    }
+
+    @Override
+    public void handleInsert(InsertionContext context) {
+        Utils.CONTAINER_INSERT_HANDLER.handleInsert(context, this);
     }
 }
