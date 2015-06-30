@@ -144,6 +144,10 @@ public class Utils {
             return null;
         }
 
+        return findContainerForMethodReference((MethodReference)methodReference);
+    }
+
+    public static Container findContainerForMethodReference(MethodReference methodReference) {
         Signature signature = new Signature();
 
         PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(methodReference, Variable.class, FieldReference.class, ArrayAccessExpression.class);
@@ -151,7 +155,7 @@ public class Utils {
             return null;
         }
 
-        PhpIndex phpIndex = PhpIndex.getInstance(stringLiteralExpression.getProject());
+        PhpIndex phpIndex = PhpIndex.getInstance(methodReference.getProject());
 
         Container container;
 
@@ -162,7 +166,7 @@ public class Utils {
                 return null;
             }
 
-            container = ContainerResolver.get(stringLiteralExpression.getProject());
+            container = ContainerResolver.get(methodReference.getProject());
 
             // find proper base container from signature
             for (String parameter : signature.getParameters()) {

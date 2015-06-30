@@ -191,7 +191,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
     public void testDisableOtherCompletions() throws Exception {
 
         assertCompletionEquals(PhpFileType.INSTANCE,
-                "<?php \n" +
+                "<?php " +
                         "$app = new \\Sorien\\Application();" +
                         "$a = $app['e'];" +
                         "$b = $app['f'];" +
@@ -206,6 +206,17 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
         assertCompletionResultEquals(PhpFileType.INSTANCE,
                 "<?php $app = new \\Sorien\\Application(); $app['con<caret>tainer2'];",
                 "<?php $app = new \\Sorien\\Application(); $app['container1']<caret>;"
+        );
+    }
+
+    public void testRegisterFunctionValuesCompletions() throws Exception {
+
+        assertCompletionEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application();" +
+                        "$app->register(null, ['<caret>' => '']);",
+
+                "container1.parameter"
         );
     }
 }

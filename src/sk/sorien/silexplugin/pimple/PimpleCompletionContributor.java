@@ -8,9 +8,11 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLanguage;
-import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
+import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexProjectComponent;
 
@@ -24,6 +26,8 @@ public class PimpleCompletionContributor extends CompletionContributor {
         extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ArrayAccessCompletionProvider());
         // $app[''] = $app->extend('<caret>', ...
         extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new ExtendsMethodParameterListCompletionProvider());
+        // $app->register(, ['<caret>' =>])
+        extend(CompletionType.BASIC, PlatformPatterns.psiElement().withLanguage(PhpLanguage.INSTANCE), new RegisterFunctionValuesCompletionProvider());
     }
 
     private static class ArrayAccessCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -86,6 +90,71 @@ public class PimpleCompletionContributor extends CompletionContributor {
 
             for (Service service : container.getServices().values()) {
                 resultSet.addElement(new ServiceLookupElement(service, project));
+            }
+
+            for (Parameter parameter : container.getParameters().values()) {
+                resultSet.addElement(new ParameterLookupElement(parameter));
+            }
+
+            resultSet.stopHere();
+        }
+    }
+
+    private static class RegisterFunctionValuesCompletionProvider extends CompletionProvider<CompletionParameters> {
+        public void addCompletions(@NotNull CompletionParameters parameters,
+                                   ProcessingContext context,
+                                   @NotNull CompletionResultSet resultSet) {
+
+            PsiElement stringLiteralExpression = parameters.getPosition().getParent();
+            Project project = stringLiteralExpression.getProject();
+
+            if(!SilexProjectComponent.isEnabled(project)) {
+                return;
+            }
+
+            if (!(stringLiteralExpression instanceof StringLiteralExpression)) {
+                return;
+            }
+
+            PsiElement arrayKeyElement = stringLiteralExpression.getParent();
+            PsiElement element = arrayKeyElement.getParent();
+
+            if (!arrayKeyElement.isEquivalentTo(element.getFirstChild())) {
+                return;
+            }
+
+            if (!(element instanceof ArrayHashElement)) {
+                return;
+            }
+
+            element = element.getParent();
+            if (!(element instanceof ArrayCreationExpression)) {
+                return;
+            }
+
+            PsiElement parameterList = element.getParent();
+            if (!(parameterList instanceof ParameterList)) {
+                return;
+            }
+
+            PsiElement[] params = ((ParameterList) parameterList).getParameters();
+            if (!(params.length > 1 && params[1].isEquivalentTo(element))) {
+                return;
+            }
+
+            PsiElement methodReference = parameterList.getParent();
+            if (!(methodReference instanceof MethodReference)) {
+                return;
+            }
+
+            String methodReferenceName = ((MethodReference) methodReference).getName();
+            if ((methodReferenceName == null) || !(methodReferenceName.equals("register"))) {
+                return;
+            }
+
+            Container container = Utils.findContainerForMethodReference((MethodReference) methodReference);
+            if (container == null) {
+                return;
             }
 
             for (Parameter parameter : container.getParameters().values()) {
