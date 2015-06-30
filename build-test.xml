@@ -4,12 +4,10 @@
 
     <!-- set global properties for this build -->
     <property name="build.compiler" value="modern"/>
-
     <property name="src" location="${basedir}/src"/>
     <property name="test.src" location="${basedir}/tests"/>
     <property name="build" location="build"/>
     <property name="test.build" location="build_test"/>
-    <property name="resources" value="${basedir}/resources"/>
     <property name="idea.build" location="${basedir}/idea/" />
     <property name="plugins" location="${basedir}/plugins"/>
     <property name="deploy" location="${basedir}/deploy"/>
@@ -21,7 +19,7 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="${basedir}/plugins/php/lib">
+        <fileset dir="${plugins}/php/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${idea.build}/plugins/properties/lib">
@@ -47,7 +45,7 @@
             <include name="**/*.jar" />
             <exclude name="ant/lib/**/*.jar" />
         </fileset>
-        <fileset dir="${basedir}/plugins/php/lib">
+        <fileset dir="${plugins}/php/lib">
             <include name="*.jar"/>
         </fileset>
         <fileset dir="${idea.build}/plugins/properties/lib">
