@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * @author Stanislav Turza
  */
-public class SilexSpellcheckerTestCase  extends SilexCodeInsightFixtureTestCase {
+public class SilexSpellcheckerTest extends SilexCodeInsightFixtureTestCase {
 
     @Override
     public void setUp() throws Exception {
