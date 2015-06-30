@@ -1,8 +1,14 @@
 package sk.sorien.silexplugin.tests;
 
-import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.jetbrains.php.lang.psi.elements.PhpReference;
+import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
+import org.jetbrains.annotations.NotNull;
+import sk.sorien.silexplugin.pimple.PimplePhpTypeProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,4 +55,52 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         myFixture.type("\n");
         myFixture.checkResult(result);
     }
+
+    public void assertTypeSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
+        myFixture.configureByText(languageFileType, configureByText);
+        PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+
+        psiElement = PsiTreeUtil.getParentOfType(psiElement, aClass);
+
+        PhpTypeProvider2[] typeAnalyser = Extensions.getExtensions(PhpTypeProvider2.EP_NAME);
+
+        for (PhpTypeProvider2 provider : typeAnalyser) {
+
+            if (provider instanceof PimplePhpTypeProvider) {
+
+                String providerType = provider.getType(psiElement);
+                if (providerType != null) {
+                    providerType = "#" + provider.getKey() + providerType;
+                }
+
+                assertEquals(typeSignature, providerType);
+            }
+        }
+    }
+
+    public void assertPhpReferenceSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
+        myFixture.configureByText(languageFileType, configureByText);
+        PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+
+        psiElement = PsiTreeUtil.getParentOfType(psiElement, aClass);
+
+        if (!(psiElement instanceof PhpReference)) {
+            fail("Element is not PhpReference.");
+        }
+
+        assertEquals(typeSignature, ((PhpReference)psiElement).getSignature());
+    }
+
+    public void assertSignatureEquals(String typeSignature, String phpClassType) {
+
+        PhpTypeProvider2[] typeAnalyser = Extensions.getExtensions(PhpTypeProvider2.EP_NAME);
+
+        for (PhpTypeProvider2 provider : typeAnalyser) {
+
+            if (provider instanceof PimplePhpTypeProvider) {
+                assertEquals(provider.getBySignature(typeSignature, myFixture.getProject()).iterator().next().getType().toString(), phpClassType);
+            }
+        }
+    }
+
 }
