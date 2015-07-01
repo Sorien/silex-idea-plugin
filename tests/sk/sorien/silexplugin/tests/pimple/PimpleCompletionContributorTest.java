@@ -202,10 +202,36 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
         );
     }
 
-    public void testInsertHandler() throws Exception {
+    public void testInsertHandlerContainer() throws Exception {
         assertCompletionResultEquals(PhpFileType.INSTANCE,
-                "<?php $app = new \\Sorien\\Application(); $app['con<caret>tainer2'];",
-                "<?php $app = new \\Sorien\\Application(); $app['container1']<caret>;"
+                "<?php " +
+                        "$app = new \\Sorien\\Application(); " +
+                        "$app['con<caret>tainer2'];",
+                "<?php " +
+                        "$app = new \\Sorien\\Application(); " +
+                        "$app['container1']<caret>;"
+        );
+    }
+
+    public void testInsertHandlerExtendMethod() throws Exception {
+        assertCompletionResultEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app['container1']['container2']->extend('<caret>', );",
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app['container1']['container2']->extend('service',<caret> );"
+        );
+    }
+
+    public void testInsertHandlerRegisterMethod() throws Exception {
+        assertCompletionResultEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app->register(null, ['<caret>' => '']);",
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app->register(null, ['container1.parameter' <caret>=> '']);"
         );
     }
 
