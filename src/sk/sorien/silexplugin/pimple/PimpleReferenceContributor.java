@@ -51,13 +51,7 @@ public class PimpleReferenceContributor extends PsiReferenceContributor {
                 return new PsiReference[0];
             }
 
-            Collection<PhpClass> classes = PhpIndex.getInstance(psiElement.getProject()).getClassesByFQN(service.getClassName());
-
-            if (classes.isEmpty()) {
-                return new PsiReference[0];
-            }
-
-            ServiceReference psiReference = new ServiceReference(classes.iterator().next(), (StringLiteralExpression) psiElement);
+            ServiceReference psiReference = new ServiceReference(service.getClassName(), (StringLiteralExpression) psiElement);
             return new PsiReference[]{psiReference};
         }
     }
