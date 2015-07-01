@@ -244,5 +244,21 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
 
                 "container1.parameter"
         );
+
+        assertCompletionEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application();" +
+                        "$app->register(null, ['<caret>']);",
+
+                "container1.parameter"
+        );
+
+        assertCompletionEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application();" +
+                        "$app->register(null, ['' => '', '<caret>']);",
+
+                "container1.parameter"
+        );
     }
 }

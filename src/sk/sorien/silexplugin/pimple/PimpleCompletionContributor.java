@@ -123,11 +123,10 @@ public class PimpleCompletionContributor extends CompletionContributor {
                 return;
             }
 
-            if (!(element instanceof ArrayHashElement)) {
-                return;
+            if (element instanceof ArrayHashElement) {
+                element = element.getParent();
             }
 
-            element = element.getParent();
             if (!(element instanceof ArrayCreationExpression)) {
                 return;
             }
