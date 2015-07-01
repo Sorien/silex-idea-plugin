@@ -29,6 +29,7 @@ public class ServiceReference extends PsiReferenceBase<PsiElement> {
 
     @NotNull
     public Object[] getVariants() {
+        // @see https://youtrack.jetbrains.com/issue/WI-21563
         return new Object[0];
     }
 
