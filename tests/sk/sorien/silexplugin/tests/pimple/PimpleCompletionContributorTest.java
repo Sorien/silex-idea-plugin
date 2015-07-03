@@ -22,7 +22,8 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
         // Create virtual container
         Container container = new Container(project);
         container.put(new Container("container1", project).put(new Container("container2", project).put(new Service("service", "\\Sorien\\Service1"))));
-        container.put(new Parameter("container1.parameter", ParameterType.INTEGER, "1"));
+        container.put(new Parameter("parameter", ParameterType.INTEGER, "1"));
+        container.put(new Service("service", "\\Sorien\\Service2"));
 
         ContainerResolver.put(myFixture.getProject(), container);
 
@@ -48,7 +49,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app['<caret>'];",
-                "container1", "container1.parameter"
+                "container1", "parameter"
         );
     }
 
@@ -89,7 +90,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                 "<?php " +
                         "$app = new \\Sorien\\Application(); " +
                         "$a = $app['<caret>'];",
-                "container1", "container1.parameter"
+                "container1", "parameter"
         );
     }
 
@@ -99,7 +100,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app->extend('<caret>', function($b){});",
-                "container1.parameter"
+                "service", "parameter"
         );
     }
 
@@ -110,6 +111,16 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "$app = new \\Silex\\Application(); " +
                         "$app['container1']['container2']->extend('<caret>', function($b){});",
                 "service"
+        );
+    }
+
+    public void testRawFunctionContainerCompletion() throws Exception {
+
+        assertCompletionEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app->raw('<caret>');",
+                "parameter", "service"
         );
     }
 
@@ -152,7 +163,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "        $session = $this->app['<caret>'];" +
                         "    }" +
                         "}",
-                "container1", "container1.parameter"
+                "container1", "parameter"
         );
     }
 
@@ -184,7 +195,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "        $app['<caret>'];" +
                         "    }" +
                         "}",
-                "container1", "container1.parameter"
+                "container1", "parameter"
         );
     }
 
@@ -198,7 +209,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "$c = $app['g'];" +
                         "$app['<caret>']",
 
-                "container1", "container1.parameter"
+                "container1", "parameter", "service"
         );
     }
 
@@ -224,6 +235,17 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
         );
     }
 
+    public void testInsertHandlerRawMethod() throws Exception {
+        assertCompletionResultEquals(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app['container1']['container2']->raw('<caret>');",
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app['container1']['container2']->raw('service')<caret>;"
+        );
+    }
+
     public void testInsertHandlerRegisterMethod() throws Exception {
         assertCompletionResultEquals(PhpFileType.INSTANCE,
                 "<?php " +
@@ -231,7 +253,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "$app->register(null, ['<caret>' => '']);",
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
-                        "$app->register(null, ['container1.parameter' <caret>=> '']);"
+                        "$app->register(null, ['parameter' <caret>=> '']);"
         );
     }
 
@@ -242,7 +264,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "$app = new \\Silex\\Application();" +
                         "$app->register(null, ['<caret>' => '']);",
 
-                "container1.parameter"
+                "parameter"
         );
 
         assertCompletionEquals(PhpFileType.INSTANCE,
@@ -250,7 +272,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "$app = new \\Silex\\Application();" +
                         "$app->register(null, ['<caret>']);",
 
-                "container1.parameter"
+                "parameter"
         );
 
         assertCompletionEquals(PhpFileType.INSTANCE,
@@ -258,7 +280,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
                         "$app = new \\Silex\\Application();" +
                         "$app->register(null, ['' => '', '<caret>']);",
 
-                "container1.parameter"
+                "parameter"
         );
     }
 }

@@ -5,6 +5,7 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.PhpReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
 import org.jetbrains.annotations.NotNull;
@@ -104,6 +105,13 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
                 assertEquals(provider.getBySignature(typeSignature, myFixture.getProject()).iterator().next().getType().toString(), phpClassType);
             }
         }
+    }
+
+    public void assertReferenceContains(LanguageFileType languageFileType, String configureByText, String classFqn) {
+        myFixture.configureByText(languageFileType, configureByText);
+        PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getParent();
+
+        assertEquals(classFqn, ((PhpClass) element.getReferences()[0].resolve()).getFQN());
     }
 
 }
