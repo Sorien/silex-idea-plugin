@@ -1,9 +1,11 @@
 <?php
 namespace Sorien {
     class Service1 {
+        const name = "service1";
     }
 
     class Service2 {
+        public $name = "service2";
     }
 
     class Application extends \Silex\Application {
@@ -16,7 +18,6 @@ namespace Silex {
 }
 
 namespace Pimple {
-
     class Container {
 
         public function __construct(array $values = array())

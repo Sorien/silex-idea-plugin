@@ -310,7 +310,7 @@ public class Utils {
         // #K#C\Class\Foo.CONST
         if(parameter.startsWith("#")) {
 
-            Collection<? extends PhpNamedElement> signTypes = phpIndex.getBySignature(parameter, null, 0);
+            Collection<? extends PhpNamedElement> signTypes = phpIndex.getBySignature(parameter);
             if(signTypes.size() == 0) {
                 return "";
             }
@@ -322,5 +322,9 @@ public class Utils {
         }
 
         return parameter;
+    }
+
+    public static Boolean isParameter(PsiElement element, PsiElement[] parameters, Integer index) {
+        return (parameters.length > index) && (parameters[index].isEquivalentTo(element));
     }
 }

@@ -40,6 +40,42 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
         return null;
     }
 
+    private Signature getChildElementSignature(PsiElement element) {
+
+        element = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class, ArrayAccessExpression.class);
+        if (element == null) {
+            return null;
+        }
+
+        Signature signature = new Signature();
+
+        if (element instanceof PhpReference) {
+            signature.set(((PhpReference) element).getSignature());
+        }
+
+        if (element instanceof ArrayAccessExpression) {
+            signature.set(getTypeForArrayAccess(element));
+        }
+
+        if (signature.getClassSignature().isEmpty() || signature.getClassSignature().equals(Utils.ARRAY_SIGNATURE)) {
+            return null;
+        }
+
+        return signature;
+    }
+
+    private String getStringOrSignature(PsiElement element) {
+
+        if (element instanceof StringLiteralExpression) {
+            return ((StringLiteralExpression) element).getContents();
+        }
+        else if (element instanceof PhpReference) {
+            return ((PhpReference) element).getSignature();
+        }
+
+        return null;
+    }
+
     private String getTypeForArrayAccess(PsiElement e) {
 
         ArrayAccessExpression arrayAccessExpression;
@@ -65,31 +101,8 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
         }
         else return null;
 
-
-        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(arrayAccessExpression, Variable.class, FieldReference.class, ArrayAccessExpression.class);
-        if (signatureElement == null) {
-            return null;
-        }
-
-        Signature signature = new Signature();
-
-        if (signatureElement instanceof Variable) {
-            // skip simple \array
-            signature.set(((Variable) signatureElement).getSignature());
-            if (signature.getClassSignature().equals(Utils.ARRAY_SIGNATURE)) {
-                return null;
-            }
-        }
-
-        if (signatureElement instanceof FieldReference) {
-            signature.set(((FieldReference)signatureElement).getSignature());
-        }
-
-        if (signatureElement instanceof ArrayAccessExpression) {
-            signature.set(getTypeForArrayAccess(signatureElement));
-        }
-
-        if (signature.getClassSignature().isEmpty()) {
+        Signature signature = getChildElementSignature(arrayAccessExpression);
+        if (signature == null) {
             return null;
         }
 
@@ -98,16 +111,10 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
-        PsiElement element = arrayIndex.getValue();
-        String serviceName;
-        
-        if (element instanceof StringLiteralExpression) {
-            serviceName = ((StringLiteralExpression) element).getContents();
+        String serviceName = getStringOrSignature(arrayIndex.getValue());
+        if (serviceName == null) {
+            return null;
         }
-        else if (element instanceof MemberReference) {
-            serviceName = ((MemberReference) element).getSignature();
-        }
-        else return null;
 
         return signature.toString() + '[' + (internalResolve ? "@" : "") + serviceName + ']';
     }
@@ -140,6 +147,7 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
         }
 
         String serviceName = null;
+        Signature signature = new Signature();
 
         element = closure.getParent();
 
@@ -160,46 +168,37 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
                 return null;
             }
 
-            if ((methodName.equals("factory") || methodName.equals("share")) && (methodParams.length == 1) && (methodParams[0].isEquivalentTo(closure)) && (anonymousFunctionParams[0].isEquivalentTo(e))) {
+            if ((methodName.equals("factory") || methodName.equals("share")) && methodParams.length == 1 &&
+                    Utils.isParameter(closure, methodParams, 0) && Utils.isParameter(e, anonymousFunctionParams, 0)) {
                 serviceName = null;
 
-            } else if (methodName.equals("extend") && (methodParams.length == 2) && (methodParams[1].isEquivalentTo(closure))) {
-                serviceName = anonymousFunctionParams[0].isEquivalentTo(e) ? ((StringLiteralExpression)methodParams[0]).getContents() : null;
+            } else if (methodName.equals("extend") && Utils.isParameter(closure, methodParams, 1)) {
+
+                if (Utils.isParameter(e, anonymousFunctionParams, 0)) {
+
+                    serviceName = getStringOrSignature(methodParams[0]);
+                    if (serviceName == null) {
+                        return null;
+                    }
+                }
 
             } else return null;
 
-        } else if (element instanceof AssignmentExpression) {
+            signature = getChildElementSignature(element);
+            if (signature == null) {
+                return null;
+            }
 
+        } else if (element instanceof AssignmentExpression) {
+            // $app[''] = function ($c)
             element = PsiTreeUtil.getChildOfAnyType(element, ArrayAccessExpression.class);
             if (element == null) {
                 return null;
             }
 
+            signature.set(getTypeForArrayAccess(element));
+
         } else return null;
-
-        Signature signature = new Signature();
-
-        PsiElement signatureElement = PsiTreeUtil.getChildOfAnyType(element, Variable.class, FieldReference.class, ArrayAccessExpression.class);
-        if (signatureElement == null) {
-            return null;
-        }
-
-        if (signatureElement instanceof Variable) {
-            signature.set(((Variable) signatureElement).getSignature());
-        }
-
-        if (signatureElement instanceof FieldReference) {
-            signature.set(((FieldReference)signatureElement).getSignature());
-        }
-
-        if (signatureElement instanceof ArrayAccessExpression) {
-            signature.set(getTypeForArrayAccess(signatureElement));
-        }
-
-        // skip simple \array
-        if (signature.getClassSignature().equals(Utils.ARRAY_SIGNATURE)) {
-            return null;
-        }
 
         return signature.toString() + ( serviceName == null ? "" : '[' + serviceName + ']');
     }
