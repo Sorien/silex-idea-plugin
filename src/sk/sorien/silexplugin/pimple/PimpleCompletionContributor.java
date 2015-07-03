@@ -119,11 +119,12 @@ public class PimpleCompletionContributor extends CompletionContributor {
             PsiElement arrayKeyElement = stringLiteralExpression.getParent();
             PsiElement element = arrayKeyElement.getParent();
 
-            if (!arrayKeyElement.isEquivalentTo(element.getFirstChild())) {
-                return;
-            }
+             if (element instanceof ArrayHashElement) {
 
-            if (element instanceof ArrayHashElement) {
+                 if (!arrayKeyElement.isEquivalentTo(element.getFirstChild())) {
+                     return;
+                 }
+
                 element = element.getParent();
             }
 

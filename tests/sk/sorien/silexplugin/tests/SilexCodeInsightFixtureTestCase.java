@@ -28,6 +28,9 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
 
     public void assertCompletionEquals(LanguageFileType languageFileType, String configureByText, String... lookupStrings) {
 
+        myFixture.configureByText(languageFileType, configureByText);
+        myFixture.completeBasic();
+
         List<String> lookupElements = myFixture.getLookupElementStrings();
         if (lookupElements == null) {
             return;
@@ -37,7 +40,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
             fail(String.format("completion %s have to contain only %s", lookupElements.toString(), Arrays.toString(lookupStrings)));
         }
 
-        assertCompletionContains(languageFileType, configureByText, lookupStrings);
+        completionContainsAssert(lookupStrings);
     }
 
     private void completionContainsAssert(String[] lookupStrings) {
