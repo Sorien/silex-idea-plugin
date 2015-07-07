@@ -1,15 +1,22 @@
 <idea-plugin version="2" url="https://github.com/Sorien/silex-idea-plugin">
   <id>sk.sorien.silex.plugin.id</id>
   <name>Silex Plugin</name>
-  <version>0.9.7</version>
+  <version>0.9.8</version>
   <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
 
   <description><![CDATA[
     <h2>Support for Silex PHP Framework.</h2>
     <p>Beta release.</p>
+
+    <p>Plugin needs pimple container dump (pimple.json) in project root directory, to create it follow instruction at https://github.com/Sorien/silex-pimple-dumper</p>
   ]]></description>
 
   <change-notes><![CDATA[
+    <h2>0.9.8</h2>
+    <ul>
+      <li>Autocomplete fine tuning (whole pimple container should be covered)</li>
+      <li>Common functionality covered by tests</li>
+    </ul>
     <h2>0.9.7</h2>
     <ul>
       <li>SubContainer type resolution and autocomplete</li>
