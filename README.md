@@ -5,6 +5,11 @@ IntelliJ IDEA / PhpStorm plugin for Silex
 [![Downloads](https://img.shields.io/github/downloads/Sorien/silex-idea-plugin/latest/total.svg?style=flat-square)](https://github.com/Sorien/silex-idea-plugin/releases)
 [![Download DEV](https://img.shields.io/badge/plugin-dev--version-FF9900.svg?style=flat-square)](http://silex.sorien.sk/download/master)
 
+[![Build Status](http://silex.sorien.sk/badge/travis.svg)](https://travis-ci.org/Sorien/silex-idea-plugin)
+[![License](http://silex.sorien.sk/badge/license.svg)](https://github.com/Sorien/silex-idea-plugin/blob/master/LICENSE)
+[![Downloads](http://silex.sorien.sk/badge/downloads.svg)](https://github.com/Sorien/silex-idea-plugin/releases)
+[![Download DEV](http://silex.sorien.sk/badge/plugin.svg)](http://silex.sorien.sk/download/master)
+
 Provides missing [Pimple Dependency Injection Container](http://pimple.sensiolabs.org/) autocomplete for [Silex](http://silex.sensiolabs.org/).  
 Plugin url: https://plugins.jetbrains.com/plugin/7809?pr=idea
 
