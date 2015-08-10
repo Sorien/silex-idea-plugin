@@ -190,13 +190,20 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
             }
 
         } else if (element instanceof AssignmentExpression) {
+
             // $app[''] = function ($c)
-            element = PsiTreeUtil.getChildOfAnyType(element, ArrayAccessExpression.class);
+
+            element = PsiTreeUtil.getChildOfType(element, ArrayAccessExpression.class);
             if (element == null) {
                 return null;
             }
 
-            signature.set(getTypeForArrayAccess(element));
+            element = PsiTreeUtil.getChildOfType(element, Variable.class);
+            if (element == null) {
+                return null;
+            }
+
+            signature.set(((Variable)element).getSignature());
 
         } else return null;
 

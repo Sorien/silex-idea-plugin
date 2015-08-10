@@ -133,6 +133,16 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         );
     }
 
+    public void testTypeForParameterAnonymousFunction() throws Exception {
+
+        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app['service2'] = function ($<caret>app) {};",
+                "#Š#C\\Silex\\Application"
+        );
+    }
+
     public void testTypeForParameterExtendMethodOneParameter() throws Exception {
 
         assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
