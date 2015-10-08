@@ -35,7 +35,7 @@ public class Utils {
 
         PsiElement children;
         PsiElement element = arrayAccessElement;
-        while ((children = PsiTreeUtil.getChildOfAnyType(element, ArrayAccessExpression.class)) != null) {
+        while ((children = PsiTreeUtil.getChildOfType(element, ArrayAccessExpression.class)) != null) {
             element = children;
         }
 

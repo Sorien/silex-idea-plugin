@@ -213,19 +213,38 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
     @Override
     public Collection<? extends PhpNamedElement> getBySignature(String expression, Project project) {
 
-        if(!SilexProjectComponent.isEnabled(project)) {
+        PhpIndex phpIndex = PhpIndex.getInstance(project);
+        Signature signature = new Signature(expression);
+
+        // try to resolve service type
+        if(SilexProjectComponent.isEnabled(project)) {
+
+            if (signature.hasParameters() && Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
+                return phpIndex.getClassesByFQN(getClassNameFromParameters(phpIndex, project, signature.getParameters()));
+            }
+        }
+
+        // if try to find internal type from array
+        Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature.getClassSignature(), null, 0);
+        if (collection.size() == 0) {
             return Collections.emptySet();
         }
 
-        PhpIndex phpIndex = PhpIndex.getInstance(project);
+        // internal type seems to be array som find proper value type
+        if (signature.hasParameters()) {
+            PhpNamedElement element = collection.iterator().next();
 
-        Signature signature = new Signature(expression);
-
-        if (signature.hasParameters() && Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
-            return phpIndex.getClassesByFQN(getClassNameFromParameters(phpIndex, project, signature.getParameters()));
+            for (String type : element.getType().getTypes()) {
+                if (type.endsWith("[]")) {
+                    Collection<? extends PhpNamedElement> result = phpIndex.getClassesByFQN(type.substring(0, type.length() - 2));
+                    if (result.size() != 0) {
+                        return result;
+                    }
+                }
+            }
         }
 
-        return phpIndex.getBySignature(signature.getClassSignature());
+        return collection;
     }
 
     private String getClassNameFromParameters(PhpIndex phpIndex, Project project, List<String> parameters) {

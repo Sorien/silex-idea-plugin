@@ -3,14 +3,10 @@ package sk.sorien.silexplugin.pimple;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.*;
 import com.intellij.util.ProcessingContext;
-import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.PhpLanguage;
-import com.jetbrains.php.lang.psi.elements.PhpClass;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import sk.sorien.silexplugin.SilexProjectComponent;
-
-import java.util.Collection;
 
 /**
  * @author Stanislav Turza
