@@ -60,7 +60,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         myFixture.checkResult(result);
     }
 
-    public void assertTypeSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
+    public void assertSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
 
@@ -82,6 +82,26 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         }
     }
 
+    public void assertTypeEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String phpClassType) {
+        myFixture.configureByText(languageFileType, configureByText);
+        PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
+
+        psiElement = PsiTreeUtil.getParentOfType(psiElement, aClass);
+
+        if (!(psiElement instanceof PhpReference)) {
+            fail("Element is not PhpReference.");
+        }
+
+        PhpTypeProvider2[] typeAnalyser = Extensions.getExtensions(PhpTypeProvider2.EP_NAME);
+
+        for (PhpTypeProvider2 provider : typeAnalyser) {
+
+            if (provider instanceof PimplePhpTypeProvider) {
+                assertEquals(provider.getBySignature(((PhpReference)psiElement).getSignature(), myFixture.getProject()).iterator().next().getType().toString(), phpClassType);
+            }
+        }
+    }
+
     public void assertPhpReferenceSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
@@ -95,7 +115,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         assertEquals(typeSignature, ((PhpReference)psiElement).getSignature());
     }
 
-    public void assertSignatureEquals(String typeSignature, String phpClassType) {
+    public void assertSignatureEqualsType(String typeSignature, String phpClassType) {
 
         PhpTypeProvider2[] typeAnalyser = Extensions.getExtensions(PhpTypeProvider2.EP_NAME);
 

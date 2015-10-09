@@ -191,8 +191,6 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
 
         } else if (element instanceof AssignmentExpression) {
 
-            // $app[''] = function ($c)
-
             element = PsiTreeUtil.getChildOfType(element, ArrayAccessExpression.class);
             if (element == null) {
                 return null;
@@ -224,13 +222,13 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
             }
         }
 
-        // if try to find internal type from array
+        // if it's not a service try to get original type
         Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature.getClassSignature(), null, 0);
         if (collection.size() == 0) {
             return Collections.emptySet();
         }
 
-        // internal type seems to be array som find proper value type
+        // original type can be array (#C\ClassType[]) resolve to proper value type
         if (signature.hasParameters()) {
             PhpNamedElement element = collection.iterator().next();
 

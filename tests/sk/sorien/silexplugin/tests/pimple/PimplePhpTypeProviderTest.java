@@ -47,7 +47,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForArrayAccessContainer() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$a<caret>pp['service1'];",
@@ -57,7 +57,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForArrayAccessMultiContainer() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app['service1']['ser<caret>vice2'];",
@@ -67,7 +67,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForArrayAccessContainerConstantKey() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
                 "<?php " +
                         "class Test {" +
                         "    const c = \"container1\";" +
@@ -80,7 +80,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForArrayAccessContainerPropertyKey() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, ArrayAccessExpression.class,
                 "<?php " +
                         "class Test {" +
                         "    public $property = \"container1\";" +
@@ -105,7 +105,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForArrayNewExpressionSignature() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, NewExpression.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, NewExpression.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$abc = new $a<caret>pp['service2_class']();",
@@ -115,7 +115,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterFactoryMethod() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app[''] = $app->factory(function ($<caret>class) {});",
@@ -125,7 +125,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterShareMethod() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app[''] = $app->share(function ($<caret>class) {});",
@@ -135,7 +135,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterAnonymousFunction() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app['service2'] = function ($<caret>app) {};",
@@ -145,7 +145,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterExtendMethodOneParameter() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app[''] = $app->extend('service2', function ($<caret>class) {});",
@@ -155,7 +155,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterExtendMethodTwoParameters() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app[''] = $app->extend('service2', function ($class, $a<caret>pplication) {});",
@@ -165,7 +165,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterExtendMethodSubContainer() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$app['container1']['container2']->extend('service1', function ($<caret>class) {});",
@@ -175,7 +175,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterConstKey() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application();" +
                         "$app['container1']['container2']->extend(\\Sorien\\Service1::name, function ($<caret>class) {});",
@@ -185,7 +185,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testTypeForParameterPropertyKey() throws Exception {
 
-        assertTypeSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
                 "<?php " +
                         "$app = new \\Silex\\Application();" +
                         "$service2 = new \\Sorien\\Service2();" +
@@ -194,13 +194,29 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         );
     }
 
-    public void testTypeSignatureToPhpType() throws Exception {
+    public void testProperArrayValueTypeIfServiceCantBeResolved() throws Exception {
 
-//        assertSignatureEquals("#Š#C\\Silex\\Application[c1]", "\\Pimple");
-//        assertSignatureEquals("#Š#C\\Silex\\Application[c1][c2]", "\\Pimple");
-        assertSignatureEquals("#Š#C\\Silex\\Application[@service2_class]", "\\Sorien\\Service2");
-        assertSignatureEquals("#Š#C\\Silex\\Application[container1][container2][service1]", "\\Sorien\\Service1");
-        assertSignatureEquals("#Š#C\\Silex\\Application[container1][container2][#K#C\\Sorien\\Service1.name]", "\\Sorien\\Service1");
-        assertSignatureEquals("#Š#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]", "\\Sorien\\Service2");
+        assertTypeEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Variable.class,
+                "<?php " +
+                        "class Publication  {};" +
+                        "class Foo {" +
+                        "    /** @var Publication[] */" +
+                        "    public $publications;" +
+                        "    public function collect() {" +
+                        "        $<caret>a = $this->publications['test'];" +
+                        "    }" +
+                        "};",
+                "\\Publication"
+        );
+    }
+
+    public void testResolveSignatureToPhpClass() throws Exception {
+
+//        assertSignatureEqualsType("#Š#C\\Silex\\Application[c1]", "\\Pimple");
+//        assertSignatureEqualsType("#Š#C\\Silex\\Application[c1][c2]", "\\Pimple");
+        assertSignatureEqualsType("#Š#C\\Silex\\Application[@service2_class]", "\\Sorien\\Service2");
+        assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][service1]", "\\Sorien\\Service1");
+        assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][#K#C\\Sorien\\Service1.name]", "\\Sorien\\Service1");
+        assertSignatureEqualsType("#Š#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]", "\\Sorien\\Service2");
     }
 }
