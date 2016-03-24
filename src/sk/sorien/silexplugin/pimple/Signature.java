@@ -54,6 +54,10 @@ public class Signature {
         return !parameters.isEmpty();
     }
 
+    public Boolean hasValidClassSignature() {
+        return !(classSignature.isEmpty() || classSignature.matches("#C\\\\(array|int|integer|float|bool|boolean)"));
+    }
+
     @Override
     public String toString() {
         String string = classSignature;

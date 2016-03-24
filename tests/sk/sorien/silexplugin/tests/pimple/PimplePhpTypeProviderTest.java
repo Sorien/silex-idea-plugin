@@ -196,7 +196,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
     public void testProperArrayValueTypeIfServiceCantBeResolved() throws Exception {
 
-        assertTypeEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Variable.class,
+        assertTypeEquals(PhpFileType.INSTANCE, Variable.class,
                 "<?php " +
                         "class Publication  {};" +
                         "class Foo {" +
@@ -208,6 +208,21 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
                         "};",
                 "\\Publication"
         );
+    }
+
+    public void testDoNotResolveArrayOfSimpleType() throws Exception {
+
+        String fixture = "<?php " +
+                        "/** @var %type%[] $array */" +
+                        "$array = [1, 2, 3];" +
+                        "$index = 0;" +
+                        "$<caret>foo = $array[$index];";
+
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "array"), null);
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "int"), null);
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "integer"), null);
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "bool"), null);
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "boolean"), null);
     }
 
     public void testResolveSignatureToPhpClass() throws Exception {

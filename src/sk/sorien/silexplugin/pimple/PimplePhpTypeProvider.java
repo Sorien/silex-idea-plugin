@@ -57,11 +57,7 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
             signature.set(getTypeForArrayAccess(element));
         }
 
-        if (signature.getClassSignature().isEmpty() || signature.getClassSignature().equals(Utils.ARRAY_SIGNATURE)) {
-            return null;
-        }
-
-        return signature;
+        return signature.hasValidClassSignature() ? signature : null;
     }
 
     private String getStringOrSignature(PsiElement element) {

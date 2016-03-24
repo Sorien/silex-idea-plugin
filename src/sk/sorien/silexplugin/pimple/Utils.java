@@ -19,8 +19,6 @@ import java.util.Collection;
  */
 public class Utils {
 
-    public static final String ARRAY_SIGNATURE = "#C\\array";
-
     public static final InsertHandler<LookupElement> CONTAINER_INSERT_HANDLER = new InsertHandler<LookupElement>() {
         @Override
         public void handleInsert(InsertionContext context, LookupElement item) {
@@ -211,11 +209,6 @@ public class Utils {
     }
 
     public static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature) {
-
-        // skip simple \array
-        if (signature.equals(ARRAY_SIGNATURE)) {
-            return false;
-        }
 
         Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature, null, 0);
         if (collection.size() == 0) {
