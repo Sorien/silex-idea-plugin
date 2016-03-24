@@ -55,7 +55,7 @@ public class Signature {
     }
 
     public Boolean hasValidClassSignature() {
-        return !(classSignature.isEmpty() || classSignature.matches("#C\\\\(array|int|integer|float|bool|boolean)"));
+        return !(classSignature.isEmpty() || classSignature.matches("#C\\\\(array|int|integer|float|bool|boolean|string)"));
     }
 
     @Override

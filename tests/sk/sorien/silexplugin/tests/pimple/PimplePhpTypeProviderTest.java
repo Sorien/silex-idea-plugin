@@ -251,6 +251,8 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "array"), null);
         assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "int"), null);
         assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "integer"), null);
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "string"), null);
+        assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "float"), null);
         assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "bool"), null);
         assertSignatureEquals(PhpFileType.INSTANCE, Variable.class, fixture.replace("%type", "boolean"), null);
     }
