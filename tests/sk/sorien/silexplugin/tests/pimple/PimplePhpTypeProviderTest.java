@@ -133,6 +133,16 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         );
     }
 
+    public void testTypeForTypedParameterShareMethod() throws Exception {
+
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app[''] = $app->share(function (MyPimpleType $<caret>class) {});",
+                null
+        );
+    }
+
     public void testTypeForParameterAnonymousFunction() throws Exception {
 
         assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
@@ -153,6 +163,16 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         );
     }
 
+    public void testTypeForTypedParameterExtendMethodOneParameter() throws Exception {
+
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app[''] = $app->extend('service2', function (MyPimpleType $<caret>class) {});",
+                null
+        );
+    }
+
     public void testTypeForParameterExtendMethodTwoParameters() throws Exception {
 
         assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
@@ -160,6 +180,16 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
                         "$app = new \\Silex\\Application(); " +
                         "$app[''] = $app->extend('service2', function ($class, $a<caret>pplication) {});",
                 "#Š#C\\Silex\\Application"
+        );
+    }
+
+    public void testTypeForTypedParameterExtendMethodTwoParameters() throws Exception {
+
+        assertSignatureEquals(PhpFileType.INSTANCE, com.jetbrains.php.lang.psi.elements.Parameter.class,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app[''] = $app->extend('service2', function ($class, MyPimpleType $a<caret>pplication) {});",
+                null
         );
     }
 

@@ -121,6 +121,10 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
             return null;
         }
 
+        if (PsiTreeUtil.getChildOfType(e, com.jetbrains.php.lang.psi.elements.ClassReference.class) != null) {
+            return null;
+        }
+
         PsiElement element = e.getParent();
         if (!(element instanceof ParameterList)) {
             return  null;
