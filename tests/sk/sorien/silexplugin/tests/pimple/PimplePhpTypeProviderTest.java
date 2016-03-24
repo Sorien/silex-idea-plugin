@@ -243,7 +243,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
     public void testDoNotResolveArrayOfSimpleType() throws Exception {
 
         String fixture = "<?php " +
-                        "/** @var %type%[] $array */" +
+                        "/** @var %type[] $array */" +
                         "$array = [1, 2, 3];" +
                         "$index = 0;" +
                         "$<caret>foo = $array[$index];";
