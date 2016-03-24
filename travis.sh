@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ideaVersion="15.0.4"
+ideaVersion="14.1.6"
 
 if [ ! -d ./idea ]; then
     # Get our IDEA dependency
@@ -19,10 +19,10 @@ if [ ! -d ./plugins ]; then
     # Download required plugins
     mkdir plugins
 
-    wget http://plugins.jetbrains.com/files/6610/22827/php-143.1184.87.zip
+    wget http://plugins.jetbrains.com/files/6610/20930/php-141.2462.zip
 
-    unzip -qo php-143.1184.87.zip -d ./plugins
-    rm -rf php-143.1184.87.zip
+    unzip -qo php-141.2462.zip -d ./plugins
+    rm -rf php-141.2462.zip
 fi
 
 # Run the tests
