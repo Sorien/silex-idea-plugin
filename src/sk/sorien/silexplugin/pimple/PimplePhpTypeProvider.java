@@ -249,12 +249,12 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
         Container container = ContainerResolver.get(project);
 
         for (int i = 0; i < parameters.size() - 1; i++) {
-            container = container.getContainers().get(Utils.resolveParameter(phpIndex, parameters.get(i)));
+            container = container.getContainers().get(Utils.getResolvedParameter(phpIndex, parameters.get(i)));
             if (container == null)
                 return null;
         }
 
-        String parameter = Utils.resolveParameter(phpIndex, parameters.get(parameters.size() - 1));
+        String parameter = Utils.getResolvedParameter(phpIndex, parameters.get(parameters.size() - 1));
 
         if (parameter.startsWith("@")) {
 

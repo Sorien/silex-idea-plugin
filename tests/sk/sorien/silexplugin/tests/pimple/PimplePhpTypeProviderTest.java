@@ -27,6 +27,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         container.put(new Parameter("service2_class", ParameterType.STRING, "\\Sorien\\Service2"));
         container.put(new Service("service2", "\\Sorien\\Service2"));
         container.put(new Service("service\\fqn", "\\Sorien\\Service2"));
+        container.put(new Service("\\Sorien\\Service2", "\\Sorien\\Service2"));
 
         ContainerResolver.put(myFixture.getProject(), container);
 
@@ -277,5 +278,6 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][service1]", "\\Sorien\\Service1");
         assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][#K#C\\Sorien\\Service1.name]", "\\Sorien\\Service1");
         assertSignatureEqualsType("#Š#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]", "\\Sorien\\Service2");
+        assertSignatureEqualsType("#Š#C\\Silex\\Application[#K#C\\Sorien\\Service2.class]", "\\Sorien\\Service2");
     }
 }

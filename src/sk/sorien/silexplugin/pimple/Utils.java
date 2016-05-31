@@ -63,7 +63,7 @@ public class Utils {
 
         // find proper base container from signature
         for (String parameter : signature.getParameters()) {
-            container = container.getContainers().get(resolveParameter(phpIndex, parameter));
+            container = container.getContainers().get(getResolvedParameter(phpIndex, parameter));
             if (container == null)
                 return null;
         }
@@ -89,7 +89,7 @@ public class Utils {
                 containerName = ((StringLiteralExpression) arrayIndexElement).getContents();
             }
             else if (arrayIndexElement instanceof MemberReference) {
-                containerName = resolveParameter(phpIndex, ((MemberReference) arrayIndexElement).getSignature());
+                containerName = getResolvedParameter(phpIndex, ((MemberReference) arrayIndexElement).getSignature());
             }
             else return null;
 
@@ -168,7 +168,7 @@ public class Utils {
 
             // find proper base container from signature
             for (String parameter : signature.getParameters()) {
-                container = container.getContainers().get(resolveParameter(phpIndex, parameter));
+                container = container.getContainers().get(getResolvedParameter(phpIndex, parameter));
                 if (container == null)
                     return null;
             }
@@ -295,12 +295,20 @@ public class Utils {
         return null;
     }
 
-    public static String resolveParameter(PhpIndex phpIndex, String parameter) {
+    public static String getResolvedParameter(PhpIndex phpIndex, String parameter) {
 
-        // PHP 5.5 class constant: workaround since signature has empty type
-        // #K#C\Class\Foo.
-        if(parameter.startsWith("#K#C") && parameter.endsWith(".")) {
-            return parameter.substring(4, parameter.length() - 1);
+        // PHP 5.5 class constant: "Class\Foo::class"
+        if(parameter.startsWith("#K#C")) {
+            // PhpStorm9: #K#C\Class\Foo.class
+            if(parameter.endsWith(".class")) {
+                return parameter.substring(4, parameter.length() - 6);
+            }
+
+            // PhpStorm8: #K#C\Class\Foo.
+            // workaround since signature has empty type
+            if(parameter.endsWith(".")) {
+                return parameter.substring(4, parameter.length() - 1);
+            }
         }
 
         // #P#C\Class\Foo.property
