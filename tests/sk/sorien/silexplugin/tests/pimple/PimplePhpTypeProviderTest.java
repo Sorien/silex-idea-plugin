@@ -26,8 +26,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         container.put(new Container("container1", project).put(new Container("container2", project).put(new Service("service1", "\\Sorien\\Service1"))));
         container.put(new Parameter("service2_class", ParameterType.STRING, "\\Sorien\\Service2"));
         container.put(new Service("service2", "\\Sorien\\Service2"));
-        container.put(new Service("service\\fqn", "\\Sorien\\Service2"));
-        container.put(new Service("\\Sorien\\Service2", "\\Sorien\\Service2"));
+        container.put(new Service("Sorien\\Service2", "\\Sorien\\Service2"));
 
         ContainerResolver.put(myFixture.getProject(), container);
 
@@ -247,7 +246,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         assertTypeEquals(PhpFileType.INSTANCE, Variable.class,
                 "<?php " +
                         "$app = new \\Silex\\Application();" +
-                        "$<caret>a = $app[\"service\\\\fqn\"];",
+                        "$<caret>a = $app[\"Sorien\\\\Service2\"];",
                 "\\Sorien\\Service2"
         );
     }
@@ -273,7 +272,7 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
 
 //        assertSignatureEqualsType("#Š#C\\Silex\\Application[c1]", "\\Pimple");
 //        assertSignatureEqualsType("#Š#C\\Silex\\Application[c1][c2]", "\\Pimple");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[service\\fqn]", "\\Sorien\\Service2");
+        assertSignatureEqualsType("#Š#C\\Silex\\Application[Sorien\\Service2]", "\\Sorien\\Service2");
         assertSignatureEqualsType("#Š#C\\Silex\\Application[@service2_class]", "\\Sorien\\Service2");
         assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][service1]", "\\Sorien\\Service1");
         assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][#K#C\\Sorien\\Service1.name]", "\\Sorien\\Service1");

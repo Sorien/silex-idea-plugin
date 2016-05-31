@@ -301,13 +301,13 @@ public class Utils {
         if(parameter.startsWith("#K#C")) {
             // PhpStorm9: #K#C\Class\Foo.class
             if(parameter.endsWith(".class")) {
-                return parameter.substring(4, parameter.length() - 6);
+                return parameter.substring(5, parameter.length() - 6);
             }
 
             // PhpStorm8: #K#C\Class\Foo.
             // workaround since signature has empty type
             if(parameter.endsWith(".")) {
-                return parameter.substring(4, parameter.length() - 1);
+                return parameter.substring(5, parameter.length() - 1);
             }
         }
 
