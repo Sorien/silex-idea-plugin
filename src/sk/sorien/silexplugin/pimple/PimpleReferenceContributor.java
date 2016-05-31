@@ -24,7 +24,7 @@ public class PimpleReferenceContributor extends PsiReferenceContributor {
         @Override
         public PsiReference[] getReferencesByElement(@NotNull PsiElement psiElement, @NotNull ProcessingContext processingContext) {
 
-            String serviceName = ((StringLiteralExpression) psiElement).getContents();
+            String serviceName = Utils.normalizedString((StringLiteralExpression) psiElement);
 
             if(!SilexProjectComponent.isEnabled(psiElement.getProject())) {
                 return new PsiReference[0];

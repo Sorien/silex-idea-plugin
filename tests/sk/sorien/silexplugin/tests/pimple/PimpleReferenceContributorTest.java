@@ -23,6 +23,7 @@ public class PimpleReferenceContributorTest extends SilexCodeInsightFixtureTestC
         Container container = new Container(project);
         container.put(new Service("service", "\\Sorien\\Service1"));
         container.put(new Parameter("parameter", ParameterType.INTEGER, "1"));
+        container.put(new Service("service\\fqn", "\\Sorien\\Service2"));
 
         ContainerResolver.put(myFixture.getProject(), container);
 
@@ -49,6 +50,26 @@ public class PimpleReferenceContributorTest extends SilexCodeInsightFixtureTestC
                         "$app = new \\Silex\\Application(); " +
                         "$app['servic<caret>e'];",
                 "\\Sorien\\Service1"
+        );
+    }
+
+    public void testContainerReferenceFqn() throws Exception {
+
+        assertReferenceContains(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app['servic<caret>e\\fqn'];",
+                "\\Sorien\\Service2"
+        );
+    }
+
+    public void testContainerReferenceFqnQuoted() throws Exception {
+
+        assertReferenceContains(PhpFileType.INSTANCE,
+                "<?php " +
+                        "$app = new \\Silex\\Application(); " +
+                        "$app[\"servic<caret>e\\\\fqn\"];",
+                "\\Sorien\\Service2"
         );
     }
 

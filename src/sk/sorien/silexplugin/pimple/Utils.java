@@ -243,6 +243,10 @@ public class Utils {
         return false;
     }
 
+    public static String normalizedString(StringLiteralExpression text) {
+        return  text.isSingleQuote() ? text.getContents(): text.getContents().replace("\\\\", "\\");
+    }
+
     private static String getStringValue(@Nullable PsiElement psiElement) {
         return getStringValue(psiElement, 0);
     }
@@ -255,7 +259,7 @@ public class Utils {
         }
 
         if (psiElement instanceof StringLiteralExpression) {
-            String resolvedString = ((StringLiteralExpression) psiElement).getContents();
+            String resolvedString = normalizedString((StringLiteralExpression) psiElement);
             if (StringUtils.isEmpty(resolvedString)) {
                 return null;
             }
@@ -283,7 +287,7 @@ public class Utils {
                 PsiElement resolved = ((Field) ref).getDefaultValue();
 
                 if (resolved instanceof StringLiteralExpression) {
-                    return ((StringLiteralExpression) resolved).getContents();
+                    return normalizedString((StringLiteralExpression) resolved);
                 }
             }
         }

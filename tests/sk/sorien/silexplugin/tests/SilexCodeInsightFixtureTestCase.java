@@ -131,7 +131,11 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getParent();
 
-        assertEquals(classFqn, ((PhpClass) element.getReferences()[0].resolve()).getFQN());
+        if ((element.getReferences().length > 0) && ((PhpClass) element.getReferences()[0].resolve()) != null) {
+            assertEquals(classFqn, ((PhpClass) element.getReferences()[0].resolve()).getFQN());
+        } else {
+            fail("Cannot resolve PhpReference.");
+        }
     }
 
 }

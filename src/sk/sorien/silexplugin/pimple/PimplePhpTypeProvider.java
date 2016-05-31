@@ -52,8 +52,7 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
         if (element instanceof PhpReference) {
             signature.set(((PhpReference) element).getSignature());
         }
-
-        if (element instanceof ArrayAccessExpression) {
+        else if (element instanceof ArrayAccessExpression) {
             signature.set(getTypeForArrayAccess(element));
         }
 
@@ -63,7 +62,7 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
     private String getStringOrSignature(PsiElement element) {
 
         if (element instanceof StringLiteralExpression) {
-            return ((StringLiteralExpression) element).getContents();
+            return Utils.normalizedString((StringLiteralExpression) element);
         }
         else if (element instanceof PhpReference) {
             return ((PhpReference) element).getSignature();
