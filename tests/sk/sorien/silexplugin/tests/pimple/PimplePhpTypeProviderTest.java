@@ -251,6 +251,16 @@ public class PimplePhpTypeProviderTest extends SilexCodeInsightFixtureTestCase {
         );
     }
 
+    public void testResolvedTypeForServiceNameBasedOnClassClass() throws Exception {
+
+        assertTypeEquals(PhpFileType.INSTANCE, Variable.class,
+                "<?php " +
+                        "$app = new \\Silex\\Application();" +
+                        "$<caret>a = $app[\\Sorien\\Service2::class\"];",
+                "\\Sorien\\Service2"
+        );
+    }
+
     public void testDoNotResolveArrayOfSimpleType() throws Exception {
 
         String fixture = "<?php " +
