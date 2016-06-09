@@ -19,7 +19,7 @@ import java.util.List;
  */
 abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
 
-    public void assertCompletionContains(LanguageFileType languageFileType, String configureByText, String... lookupStrings) {
+    protected void assertCompletionContains(LanguageFileType languageFileType, String configureByText, String... lookupStrings) {
 
         myFixture.configureByText(languageFileType, configureByText);
         myFixture.completeBasic();
@@ -27,7 +27,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         completionContainsAssert(lookupStrings);
     }
 
-    public void assertCompletionEquals(LanguageFileType languageFileType, String configureByText, String... lookupStrings) {
+    protected void assertCompletionEquals(LanguageFileType languageFileType, String configureByText, String... lookupStrings) {
 
         myFixture.configureByText(languageFileType, configureByText);
         myFixture.completeBasic();
@@ -53,14 +53,14 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         }
     }
 
-    public void assertCompletionResultEquals(LanguageFileType languageFileType, String configureByText, String result) {
+    protected void assertCompletionResultEquals(LanguageFileType languageFileType, String configureByText, String result) {
         myFixture.configureByText(languageFileType, configureByText);
         myFixture.completeBasic();
         myFixture.type("\n");
         myFixture.checkResult(result);
     }
 
-    public void assertSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
+    protected void assertSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
 
@@ -82,7 +82,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         }
     }
 
-    public void assertTypeEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String phpClassType) {
+    protected void assertTypeEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String phpClassType) {
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
 
@@ -102,7 +102,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         }
     }
 
-    public void assertPhpReferenceSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
+    protected void assertPhpReferenceSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement psiElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
 
@@ -115,7 +115,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         assertEquals(typeSignature, ((PhpReference)psiElement).getSignature());
     }
 
-    public void assertSignatureEqualsType(String typeSignature, String phpClassType) {
+    protected void assertSignatureEqualsType(String typeSignature, String phpClassType) {
 
         PhpTypeProvider2[] typeAnalyser = Extensions.getExtensions(PhpTypeProvider2.EP_NAME);
 
@@ -127,7 +127,7 @@ abstract public class SilexCodeInsightFixtureTestCase extends LightCodeInsightFi
         }
     }
 
-    public void assertReferenceContains(LanguageFileType languageFileType, String configureByText, String classFqn) {
+    protected void assertReferenceContains(LanguageFileType languageFileType, String configureByText, String classFqn) {
         myFixture.configureByText(languageFileType, configureByText);
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getParent();
 

@@ -209,6 +209,14 @@ public class Utils {
     }
 
     public static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature) {
+        return isPimpleContainerClass(phpIndex, signature, 0);
+    }
+
+    private static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature, int depth) {
+
+        if (++depth > 3) {
+            return false;
+        }
 
         Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature, null, 0);
         if (collection.size() == 0) {
@@ -225,16 +233,20 @@ public class Utils {
 
             for (String type : element.getType().getTypes()) {
 
-                collection = phpIndex.getClassesByFQN(type);
-                if (collection.size() == 0) {
-                    continue;
-                }
+                if (type.startsWith("#") && isPimpleContainerClass(phpIndex, type, depth)) {
+                    return true;
+                } else {
+                    collection = phpIndex.getClassesByFQN(type);
+                    if (collection.size() == 0) {
+                        continue;
+                    }
 
-                element = collection.iterator().next();
+                    element = collection.iterator().next();
 
-                if (element instanceof PhpClass) {
-                    if (isPimpleContainerClass((PhpClass) element)) {
-                        return true;
+                    if (element instanceof PhpClass) {
+                        if (isPimpleContainerClass((PhpClass) element)) {
+                            return true;
+                        }
                     }
                 }
             }

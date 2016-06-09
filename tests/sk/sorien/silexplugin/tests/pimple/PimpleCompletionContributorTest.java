@@ -26,7 +26,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
         container.put(new Service("service", "\\Sorien\\Service2"));
         container.put(new Service("service\\fqn", "\\Sorien\\Service2"));
 
-        ContainerResolver.put(myFixture.getProject(), container);
+        ContainerResolver.put(project, container);
 
         // Add Fixtures
         myFixture.configureFromExistingVirtualFile(myFixture.copyFileToProject("classes.php"));
@@ -44,7 +44,7 @@ public class PimpleCompletionContributorTest extends SilexCodeInsightFixtureTest
         return new File(this.getClass().getResource("fixtures").getFile()).getAbsolutePath();
     }
 
-    public void testContainerCompletioninInsideApostrophes() throws Exception {
+    public void testContainerCompletionInsideApostrophes() throws Exception {
 
         assertCompletionContains(PhpFileType.INSTANCE,
                 "<?php " +
