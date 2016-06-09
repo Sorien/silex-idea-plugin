@@ -36,6 +36,10 @@ public class SilexProjectComponent implements com.intellij.openapi.components.Pr
         Notifications.Bus.notify(new Notification("Silex Plugin", "Silex Plugin", text, NotificationType.ERROR), project);
     }
 
+    public static void warning(String text, Project project) {
+        Notifications.Bus.notify(new Notification("Silex Plugin", "Silex Plugin", text, NotificationType.WARNING), project);
+    }
+
     public void initComponent() {
 
     }

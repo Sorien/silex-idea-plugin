@@ -28,6 +28,10 @@ public class JsonFileContainer extends Container {
     public JsonFileContainer(Project project) {
         super(project);
         file = new File(project.getBaseDir().getPath() + '/' + CONTAINER_JSON_DUMP);
+
+        if (!file.exists()) {
+            SilexProjectComponent.warning(CONTAINER_LOAD_ERROR, project);
+        }
     }
 
     @Override
