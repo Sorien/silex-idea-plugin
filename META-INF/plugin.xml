@@ -1,13 +1,11 @@
 <idea-plugin version="2" url="https://github.com/Sorien/silex-idea-plugin">
   <id>sk.sorien.silex.plugin.id</id>
-  <name>Silex/Pimple Plugin</name>
+  <name>Pimple Plugin</name>
   <version>0.9.9</version>
   <vendor email="stanislav.turza@gmail.com" url="http://www.sorien.sk">Sorien</vendor>
 
   <description><![CDATA[
     <h2>Code completion for Pimple PHP Dependency Injection Container</h2>
-    <p>Beta release.</p>
-
     <p>Plugin needs pimple container dump (pimple.json) in project root directory, to create it follow instruction at https://github.com/Sorien/silex-pimple-dumper</p>
   ]]></description>
 
@@ -36,19 +34,19 @@
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <completion.contributor language="PHP" order="FIRST" implementationClass="sk.sorien.silexplugin.pimple.PimpleCompletionContributor"/>
-    <psi.referenceContributor implementation="sk.sorien.silexplugin.pimple.PimpleReferenceContributor"/>
-    <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.PimplePhpTypeProvider"/>
+    <completion.contributor language="PHP" order="FIRST" implementationClass="sk.sorien.pimpleplugin.pimple.PimpleCompletionContributor"/>
+    <psi.referenceContributor implementation="sk.sorien.pimpleplugin.pimple.PimpleReferenceContributor"/>
+    <php.typeProvider2 implementation="sk.sorien.pimpleplugin.pimple.PimplePhpTypeProvider"/>
 
-    <projectConfigurable instance="sk.sorien.silexplugin.ui.ConfigurationForm" displayName="Silex Plugin"/>
-    <projectService serviceImplementation="sk.sorien.silexplugin.Configuration"/>
-    <spellchecker.bundledDictionaryProvider implementation="sk.sorien.silexplugin.spellchecker.SilexDictionaryProvider"/>
-    <spellchecker.support language="PHP" implementationClass="sk.sorien.silexplugin.spellchecker.SilexSpellcheckingStrategy" order="FIRST"/>
+    <projectConfigurable instance="sk.sorien.pimpleplugin.ui.ConfigurationForm" displayName="Silex Plugin"/>
+    <projectService serviceImplementation="sk.sorien.pimpleplugin.Configuration"/>
+    <spellchecker.bundledDictionaryProvider implementation="sk.sorien.pimpleplugin.spellchecker.DictionaryProvider"/>
+    <spellchecker.support language="PHP" implementationClass="sk.sorien.pimpleplugin.spellchecker.SpellcheckingStrategy" order="FIRST"/>
   </extensions>
 
   <project-components>
     <component>
-      <implementation-class>sk.sorien.silexplugin.ProjectComponent</implementation-class>
+      <implementation-class>sk.sorien.pimpleplugin.ProjectComponent</implementation-class>
       <loadForDefaultProject/>
     </component>
   </project-components>
