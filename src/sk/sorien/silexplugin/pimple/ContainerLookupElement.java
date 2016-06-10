@@ -4,7 +4,7 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.SilexIcons;
+import sk.sorien.silexplugin.ui.Icons;
 
 /**
  * @author Stanislav Turza
@@ -27,7 +27,7 @@ public class ContainerLookupElement extends LookupElement {
 
         presentation.setItemText(getLookupString());
         presentation.setTypeText("Pimple");
-        presentation.setIcon(SilexIcons.Container);
+        presentation.setIcon(Icons.Container);
     }
 
     @Override

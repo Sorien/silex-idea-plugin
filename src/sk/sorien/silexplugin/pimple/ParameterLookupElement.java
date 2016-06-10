@@ -4,7 +4,7 @@ import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.SilexIcons;
+import sk.sorien.silexplugin.ui.Icons;
 
 public class ParameterLookupElement extends LookupElement {
 
@@ -28,7 +28,7 @@ public class ParameterLookupElement extends LookupElement {
         if (!parameter.getValue().isEmpty())
             presentation.appendTailText("(" + parameter.getValue() + ")", true);
 
-        presentation.setIcon(SilexIcons.Parameter);
+        presentation.setIcon(Icons.Parameter);
     }
 
     @Override

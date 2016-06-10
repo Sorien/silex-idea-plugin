@@ -6,7 +6,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.SilexProjectComponent;
+import sk.sorien.silexplugin.ProjectComponent;
 
 /**
  * @author Stanislav Turza
@@ -26,7 +26,7 @@ public class PimpleReferenceContributor extends PsiReferenceContributor {
 
             String serviceName = Utils.normalizedString((StringLiteralExpression) psiElement);
 
-            if(!SilexProjectComponent.isEnabled(psiElement.getProject())) {
+            if(!ProjectComponent.isEnabled(psiElement.getProject())) {
                 return new PsiReference[0];
             }
 

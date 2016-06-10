@@ -8,7 +8,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.php.lang.PhpLanguage;
 import com.jetbrains.php.lang.psi.elements.*;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.SilexProjectComponent;
+import sk.sorien.silexplugin.ProjectComponent;
 
 /**
  * @author Stanislav Turza
@@ -32,7 +32,7 @@ public class PimpleCompletionContributor extends CompletionContributor {
             PsiElement element = parameters.getPosition().getParent();
             Project project = element.getProject();
 
-            if(!SilexProjectComponent.isEnabled(project)) {
+            if(!ProjectComponent.isEnabled(project)) {
                 return;
             }
 
@@ -69,7 +69,7 @@ public class PimpleCompletionContributor extends CompletionContributor {
             PsiElement element = parameters.getPosition().getParent();
             Project project = element.getProject();
 
-            if(!SilexProjectComponent.isEnabled(project)) {
+            if(!ProjectComponent.isEnabled(project)) {
                 return;
             }
 
@@ -102,7 +102,7 @@ public class PimpleCompletionContributor extends CompletionContributor {
             PsiElement stringLiteralExpression = parameters.getPosition().getParent();
             Project project = stringLiteralExpression.getProject();
 
-            if(!SilexProjectComponent.isEnabled(project)) {
+            if(!ProjectComponent.isEnabled(project)) {
                 return;
             }
 

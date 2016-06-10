@@ -1,11 +1,13 @@
 package sk.sorien.silexplugin.pimple;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.WindowManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import sk.sorien.silexplugin.SilexProjectComponent;
+import sk.sorien.silexplugin.ProjectComponent;
+import sk.sorien.silexplugin.ui.ContainerStatusBarWidget;
 import sk.sorien.silexplugin.utils.ContainerMap;
 
 import java.io.File;
@@ -18,19 +20,22 @@ import java.io.IOException;
  */
 public class JsonFileContainer extends Container {
 
-    private static final String CONTAINER_JSON_DUMP = "pimple.json";
-    private static final String CONTAINER_LOAD_ERROR = "Failed to load container definitions from " + CONTAINER_JSON_DUMP;
+    private static final String CONTAINER_LOAD_ERROR = "Failed to load Pimple Dump file";
 
     private long lastModified = 0;
     private final File file;
     private final JSONParser jsonParser = new JSONParser();
 
-    public JsonFileContainer(Project project) {
+    public JsonFileContainer(final Project project, String fileName) {
         super(project);
-        file = new File(project.getBaseDir().getPath() + File.separator + CONTAINER_JSON_DUMP);
+        file = new File(fileName);
 
+        ContainerStatusBarWidget sb = (ContainerStatusBarWidget)WindowManager.getInstance().getStatusBar(project).getWidget("silex.statusbar.widget");
         if (!file.exists()) {
-            SilexProjectComponent.warning(CONTAINER_LOAD_ERROR, project);
+            ProjectComponent.warning("Pimple Dump file doesn't exists.", project);
+            sb.setText("Missing");
+        } else {
+            sb.setText("Loaded");
         }
     }
 
@@ -93,13 +98,13 @@ public class JsonFileContainer extends Container {
             parseContainer(this, (JSONArray) jsonParser.parse(new FileReader(file)));
 
         } catch (FileNotFoundException e) {
-            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
+            ProjectComponent.error(CONTAINER_LOAD_ERROR, project);
         } catch (IOException e) {
-            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
+            ProjectComponent.error(CONTAINER_LOAD_ERROR, project);
         } catch (NullPointerException e) {
-            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
+            ProjectComponent.error(CONTAINER_LOAD_ERROR, project);
         } catch (ParseException e) {
-            SilexProjectComponent.error(CONTAINER_LOAD_ERROR, project);
+            ProjectComponent.error(CONTAINER_LOAD_ERROR, project);
         }
     }
 

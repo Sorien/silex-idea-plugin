@@ -7,7 +7,7 @@ import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.*;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
 import org.jetbrains.annotations.Nullable;
-import sk.sorien.silexplugin.SilexProjectComponent;
+import sk.sorien.silexplugin.ProjectComponent;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -214,7 +214,7 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
         Signature signature = new Signature(expression);
 
         // try to resolve service type
-        if(SilexProjectComponent.isEnabled(project)) {
+        if(ProjectComponent.isEnabled(project)) {
 
             if (signature.hasParameters() && Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
                 return phpIndex.getClassesByFQN(getClassNameFromParameters(phpIndex, project, signature.getParameters()));

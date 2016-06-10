@@ -40,7 +40,7 @@
     <psi.referenceContributor implementation="sk.sorien.silexplugin.pimple.PimpleReferenceContributor"/>
     <php.typeProvider2 implementation="sk.sorien.silexplugin.pimple.PimplePhpTypeProvider"/>
 
-    <projectConfigurable instance="sk.sorien.silexplugin.ConfigurationForm" displayName="Silex Plugin"/>
+    <projectConfigurable instance="sk.sorien.silexplugin.ui.ConfigurationForm" displayName="Silex Plugin"/>
     <projectService serviceImplementation="sk.sorien.silexplugin.Configuration"/>
     <spellchecker.bundledDictionaryProvider implementation="sk.sorien.silexplugin.spellchecker.SilexDictionaryProvider"/>
     <spellchecker.support language="PHP" implementationClass="sk.sorien.silexplugin.spellchecker.SilexSpellcheckingStrategy" order="FIRST"/>
@@ -48,7 +48,7 @@
 
   <project-components>
     <component>
-      <implementation-class>sk.sorien.silexplugin.SilexProjectComponent</implementation-class>
+      <implementation-class>sk.sorien.silexplugin.ProjectComponent</implementation-class>
       <loadForDefaultProject/>
     </component>
   </project-components>

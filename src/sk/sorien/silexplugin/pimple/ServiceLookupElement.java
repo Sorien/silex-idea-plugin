@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.SilexIcons;
+import sk.sorien.silexplugin.ui.Icons;
 
 import java.util.Collection;
 
@@ -34,7 +34,7 @@ public class ServiceLookupElement extends LookupElement {
 
         presentation.setItemText(getLookupString());
         presentation.setTypeText(service.getClassName().substring(1));
-        presentation.setIcon(SilexIcons.Service);
+        presentation.setIcon(Icons.Service);
     }
 
     @NotNull

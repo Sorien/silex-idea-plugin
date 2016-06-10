@@ -6,7 +6,7 @@ import com.intellij.spellchecker.tokenizer.Tokenizer;
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression;
 import com.jetbrains.php.spellchecker.PhpSpellcheckingStrategy;
 import org.jetbrains.annotations.NotNull;
-import sk.sorien.silexplugin.SilexProjectComponent;
+import sk.sorien.silexplugin.ProjectComponent;
 import sk.sorien.silexplugin.pimple.Container;
 import sk.sorien.silexplugin.pimple.Utils;
 
@@ -25,7 +25,7 @@ public class SilexSpellcheckingStrategy extends PhpSpellcheckingStrategy {
             return super.getTokenizer(element);
         }
 
-        if(!SilexProjectComponent.isEnabled(element.getProject())) {
+        if(!ProjectComponent.isEnabled(element.getProject())) {
             return super.getTokenizer(element);
         }
 

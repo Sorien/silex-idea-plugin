@@ -4,24 +4,35 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.StatusBar;
+import com.intellij.openapi.wm.WindowManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import sk.sorien.silexplugin.pimple.ContainerResolver;
 import sk.sorien.silexplugin.pimple.JsonFileContainer;
+import sk.sorien.silexplugin.ui.ContainerStatusBarWidget;
 
 /**
  * @author Stanislav Turza
  */
-public class SilexProjectComponent implements com.intellij.openapi.components.ProjectComponent {
+public class ProjectComponent implements com.intellij.openapi.components.ProjectComponent {
 
     private final Project project;
 
-    public SilexProjectComponent(Project project) {
+    public ProjectComponent(Project project) {
         this.project = project;
     }
 
     public void projectOpened() {
-        ContainerResolver.put(project, new JsonFileContainer(project));
+        StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+        if (statusBar != null) {
+            ContainerStatusBarWidget containerStatusBarWidget = new ContainerStatusBarWidget(project);
+            statusBar.addWidget(containerStatusBarWidget);
+
+            containerStatusBarWidget.setText("");
+        }
+
+        ContainerResolver.put(project, new JsonFileContainer(project, Configuration.getInstance(project).containerDefinitionFileName));
     }
 
     public void projectClosed() {
@@ -38,6 +49,11 @@ public class SilexProjectComponent implements com.intellij.openapi.components.Pr
 
     public static void warning(String text, Project project) {
         Notifications.Bus.notify(new Notification("Silex Plugin", "Silex Plugin", text, NotificationType.WARNING), project);
+    }
+
+    public static void configChanged(Project project) {
+        ContainerResolver.remove(project);
+        ContainerResolver.put(project, new JsonFileContainer(project, Configuration.getInstance(project).containerDefinitionFileName));
     }
 
     public void initComponent() {

@@ -5,6 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
 /**
  * @author Stanislav Turza
  */
@@ -17,10 +19,20 @@ import org.jetbrains.annotations.Nullable;
 )
 public class Configuration implements PersistentStateComponent<Configuration> {
 
+    private static final String CONTAINER_JSON_DUMP = "pimple.json";
+
     public boolean pluginEnabled = true;
+    public String containerDefinitionFileName = "";
 
     public static Configuration getInstance(Project project) {
-        return ServiceManager.getService(project, Configuration.class);
+
+        Configuration config = ServiceManager.getService(project, Configuration.class);
+
+        if (config.containerDefinitionFileName.equals("")) {
+            config.containerDefinitionFileName =  project.getBasePath() + File.separator + CONTAINER_JSON_DUMP;
+        }
+
+        return config;
     }
 
     @Nullable
