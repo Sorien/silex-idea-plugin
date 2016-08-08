@@ -23,22 +23,27 @@ public class Signature {
 
     public void set(@Nullable String expression) {
 
-        classSignature = "";
-        parameters.clear();
+        try
+        {
+            classSignature = "";
+            parameters.clear();
 
-        if (expression != null) {
-            int openBraceletIndex = expression.indexOf('[');
-            int closeBraceletIndex = expression.lastIndexOf(']');
+            if (expression != null) {
+                int openBraceletIndex = expression.indexOf('[');
+                int closeBraceletIndex = expression.lastIndexOf(']');
 
-            if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
-                classSignature = expression;
-                return;
+                if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
+                    classSignature = expression;
+                    return;
+                }
+
+                classSignature = expression.substring(0, openBraceletIndex);
+
+                String[] split = StringUtils.splitByWholeSeparatorPreserveAllTokens(expression.substring(openBraceletIndex + 1, closeBraceletIndex), "][");
+                Collections.addAll(parameters, split);
             }
-
-            classSignature = expression.substring(0, openBraceletIndex);
-
-            String[] split = StringUtils.splitByWholeSeparatorPreserveAllTokens(expression.substring(openBraceletIndex + 1, closeBraceletIndex), "][");
-            Collections.addAll(parameters, split);
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException(expression);
         }
     }
 
