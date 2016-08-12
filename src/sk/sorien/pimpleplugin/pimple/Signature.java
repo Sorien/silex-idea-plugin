@@ -1,18 +1,14 @@
 package sk.sorien.pimpleplugin.pimple;
 
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @author Stanislav Turza
  */
 public class Signature {
 
-    private String classSignature = "";
-    private final ArrayList<String> parameters = new ArrayList<String>();
+    public String base = "";
+    public String parameter = "";
 
     public Signature(@Nullable String expression) {
         set(expression);
@@ -25,52 +21,54 @@ public class Signature {
 
         try
         {
-            classSignature = "";
-            parameters.clear();
+            base = "";
+            parameter = "";
 
             if (expression != null) {
-                int openBraceletIndex = expression.indexOf('[');
-                int closeBraceletIndex = expression.lastIndexOf(']');
+                int len = expression.length();
+                int start = -1;
+                int counter = 0;
 
-                if ((openBraceletIndex == -1) || (closeBraceletIndex == -1)) {
-                    classSignature = expression;
+                if (expression.charAt(len - 1) == ']') {
+                    for (int i = (len - 2); i >= 0; i--){
+                        if ((expression.charAt(i) == '[') && (counter == 0)) {
+                            start = i;
+                            break;
+                        }
+
+                        if ((expression.charAt(i) == ']') ) {
+                            counter++;
+                        }
+
+                        if ((expression.charAt(i) == '[') ) {
+                            counter--;
+                        }
+                    }
+                }
+
+                if (start == -1) {
+                    base = expression;
                     return;
                 }
 
-                classSignature = expression.substring(0, openBraceletIndex);
-
-                String[] split = StringUtils.splitByWholeSeparatorPreserveAllTokens(expression.substring(openBraceletIndex + 1, closeBraceletIndex), "][");
-                Collections.addAll(parameters, split);
+                base = expression.substring(0, start);
+                parameter = expression.substring(start + 1, len - 1);
             }
         } catch (StringIndexOutOfBoundsException e) {
             throw new IllegalArgumentException(expression);
         }
     }
 
-    public ArrayList<String> getParameters() {
-        return parameters;
-    }
-
-    public String getClassSignature() {
-        return classSignature;
-    }
-
-    public Boolean hasParameters() {
-        return !parameters.isEmpty();
+    public Boolean hasParameter() {
+        return !parameter.isEmpty();
     }
 
     public Boolean hasValidClassSignature() {
-        return !(classSignature.isEmpty() || classSignature.matches("#C\\\\(array|int|integer|float|bool|boolean|string)"));
+        return !(base.isEmpty() || base.matches("#C\\\\(array|int|integer|float|bool|boolean|string)"));
     }
 
     @Override
     public String toString() {
-        String string = classSignature;
-
-        for (String param : parameters) {
-            string = string + "[" + param + "]";
-        }
-
-        return string;
+        return base + (this.hasParameter() ? "[" + parameter + "]" : "");
     }
 }

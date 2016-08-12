@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -55,14 +56,15 @@ public class Utils {
 
         PhpIndex phpIndex = PhpIndex.getInstance(arrayAccessElement.getProject());
 
-        if (!Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
+        ArrayList<String> parameters = new ArrayList<>();
+        if (!findPimpleContainer(phpIndex, signature.base, parameters)) {
             return null;
         }
 
         Container container = ContainerResolver.get(arrayAccessElement.getProject());
 
         // find proper base container from signature
-        for (String parameter : signature.getParameters()) {
+        for (String parameter : parameters) {
             container = container.getContainers().get(getResolvedParameter(phpIndex, parameter));
             if (container == null)
                 return null;
@@ -160,14 +162,15 @@ public class Utils {
         if (signatureElement instanceof Variable || signatureElement instanceof FieldReference) {
             signature.set(((PhpReference) signatureElement).getSignature());
 
-            if (!Utils.isPimpleContainerClass(phpIndex, signature.getClassSignature())) {
+            ArrayList<String> parameters = new ArrayList<>();
+            if (!Utils.findPimpleContainer(phpIndex, signature.base, parameters)) {
                 return null;
             }
 
             container = ContainerResolver.get(methodReference.getProject());
 
             // find proper base container from signature
-            for (String parameter : signature.getParameters()) {
+            for (String parameter : parameters) {
                 container = container.getContainers().get(getResolvedParameter(phpIndex, parameter));
                 if (container == null)
                     return null;
@@ -183,7 +186,7 @@ public class Utils {
         return null;
     }
 
-    private static Boolean isPimpleContainerClass(PhpClass phpClass) {
+    public static Boolean isPimpleContainerClass(PhpClass phpClass) {
 
         if (phpClass == null) {
             return false;
@@ -208,17 +211,25 @@ public class Utils {
         return className != null && (className.equals("\\Silex\\Application") || className.equals("\\Pimple\\Container") || className.equals("\\Pimple"));
     }
 
-    public static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature) {
-        return isPimpleContainerClass(phpIndex, signature, 0);
+    public static Boolean findPimpleContainer(PhpIndex phpIndex, String expression, ArrayList<String> parameters) {
+        return findPimpleContainer(phpIndex, expression, parameters, 0);
     }
 
-    private static Boolean isPimpleContainerClass(PhpIndex phpIndex, String signature, int depth) {
+    private static Boolean findPimpleContainer(PhpIndex phpIndex, String expression, ArrayList<String> parameters, int depth) {
 
-        if (++depth > 3) {
+        if (++depth > 5) {
             return false;
         }
 
-        Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(signature, null, 0);
+        Signature signature = new Signature(expression);
+        Collection<? extends PhpNamedElement> collection;
+
+        if (expression.startsWith("#")) {
+            collection = phpIndex.getBySignature(signature.base, null, 0);
+        } else {
+            collection = phpIndex.getClassesByFQN(signature.base);
+        }
+
         if (collection.size() == 0) {
             return false;
         }
@@ -226,29 +237,21 @@ public class Utils {
         PhpNamedElement element = collection.iterator().next();
 
         if (element instanceof PhpClass) {
-            return isPimpleContainerClass((PhpClass) element);
+            if (Utils.isPimpleContainerClass((PhpClass) element)) {
+                if (signature.hasParameter()) {
+                    parameters.add(signature.parameter);
+                }
+                return true;
+            }
         }
 
-        if ((element instanceof Field) || (element instanceof Method)) {
+        for (String type : element.getType().getTypes()) {
 
-            for (String type : element.getType().getTypes()) {
-
-                if (type.startsWith("#") && isPimpleContainerClass(phpIndex, type, depth)) {
-                    return true;
-                } else {
-                    collection = phpIndex.getClassesByFQN(type);
-                    if (collection.size() == 0) {
-                        continue;
-                    }
-
-                    element = collection.iterator().next();
-
-                    if (element instanceof PhpClass) {
-                        if (isPimpleContainerClass((PhpClass) element)) {
-                            return true;
-                        }
-                    }
+            if (findPimpleContainer(phpIndex, type, parameters, depth)) {
+                if (signature.hasParameter()) {
+                    parameters.add(signature.parameter);
                 }
+                return true;
             }
         }
 

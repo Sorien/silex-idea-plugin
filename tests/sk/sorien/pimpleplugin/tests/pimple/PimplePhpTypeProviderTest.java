@@ -95,12 +95,13 @@ public class PimplePhpTypeProviderTest extends CodeInsightFixtureTestCase {
 
     public void testTypeForArrayAccessReferencedContainer() throws Exception {
 
-        assertPhpReferenceSignatureEquals(PhpFileType.INSTANCE, Variable.class,
+        assertTypeEquals(PhpFileType.INSTANCE, Variable.class,
                 "<?php " +
                         "$app = new \\Silex\\Application(); " +
                         "$a = $app['container1']; " +
-                        "$se<caret>rvice = $a['service1']",
-                "#Š#Š#C\\Silex\\Application[container1][service1]"
+                        "$b = $a['container2']; " +
+                        "$se<caret>rvice = $b['service1']",
+                "\\Sorien\\Service1"
         );
     }
 
@@ -225,7 +226,7 @@ public class PimplePhpTypeProviderTest extends CodeInsightFixtureTestCase {
         );
     }
 
-    public void testProperArrayValueTypeIfServiceCantBeResolved() throws Exception {
+    public void ProperArrayValueTypeIfServiceCantBeResolved() throws Exception {
 
         assertTypeEquals(PhpFileType.INSTANCE, Variable.class,
                 "<?php " +
@@ -234,7 +235,7 @@ public class PimplePhpTypeProviderTest extends CodeInsightFixtureTestCase {
                         "    /** @var Publication[] */" +
                         "    public $publications;" +
                         "    public function collect() {" +
-                        "        $<caret>a = $this->publications['test'];" +
+                        "        $var<caret>a = $this->publications['test'];" +
                         "    }" +
                         "};",
                 "\\Publication"
@@ -280,13 +281,18 @@ public class PimplePhpTypeProviderTest extends CodeInsightFixtureTestCase {
 
     public void testResolveSignatureToPhpClass() throws Exception {
 
-//        assertSignatureEqualsType("#Š#C\\Silex\\Application[c1]", "\\Pimple");
-//        assertSignatureEqualsType("#Š#C\\Silex\\Application[c1][c2]", "\\Pimple");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[Sorien\\Service2]", "\\Sorien\\Service2");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[@service2_class]", "\\Sorien\\Service2");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][service1]", "\\Sorien\\Service1");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[container1][container2][#K#C\\Sorien\\Service1.name]", "\\Sorien\\Service1");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]", "\\Sorien\\Service2");
-        assertSignatureEqualsType("#Š#C\\Silex\\Application[#K#C\\Sorien\\Service2.class]", "\\Sorien\\Service2");
+        assertSignatureEqualsType("#C\\Silex\\Application[Sorien\\Service2]", "\\Sorien\\Service2");
+        assertSignatureEqualsType("#C\\Silex\\Application[@service2_class]", "\\Sorien\\Service2");
+        //assertSignatureEqualsType("#Š#Š#C\\Silex\\Application[container1][container2][service1]", "\\Sorien\\Service1");
+        //assertSignatureEqualsType("#Š#Š#C\\Silex\\Application[container1][container2][#K#C\\Sorien\\Service1.name]", "\\Sorien\\Service1");
+        assertSignatureEqualsType("#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]", "\\Sorien\\Service2");
+        assertSignatureEqualsType("#C\\Silex\\Application[#K#C\\Sorien\\Service2.class]", "\\Sorien\\Service2");
+    }
+
+    public void testSignature() throws Exception {
+        assertEquals("#C\\Silex\\Application", new Signature("#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]").base);
+        assertEquals("#P#C\\Sorien\\Service2.name", new Signature("#C\\Silex\\Application[#P#C\\Sorien\\Service2.name]").parameter);
+        assertEquals("#C\\Silex\\Application", new Signature("#C\\Silex\\Application[#C\\Pimple[@service2_class]]").base);
+        assertEquals("#C\\Pimple[@service2_class]", new Signature("#C\\Silex\\Application[#C\\Pimple[@service2_class]]").parameter);
     }
 }

@@ -5,13 +5,18 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.jetbrains.php.PhpIndex;
 import com.jetbrains.php.lang.psi.elements.PhpClass;
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement;
 import com.jetbrains.php.lang.psi.elements.PhpReference;
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider2;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 import sk.sorien.pimpleplugin.pimple.PimplePhpTypeProvider;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -92,14 +97,27 @@ abstract public class CodeInsightFixtureTestCase extends LightCodeInsightFixture
             fail("Element is not PhpReference.");
         }
 
-        PhpTypeProvider2[] typeAnalyser = Extensions.getExtensions(PhpTypeProvider2.EP_NAME);
+        PhpIndex phpIndex = PhpIndex.getInstance(myFixture.getProject());
+        Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(((PhpReference)psiElement).getSignature(), null, 0);
+        assertNotEmpty(collection);
 
-        for (PhpTypeProvider2 provider : typeAnalyser) {
+        String types = "";
 
-            if (provider instanceof PimplePhpTypeProvider) {
-                assertEquals(provider.getBySignature(((PhpReference)psiElement).getSignature(), myFixture.getProject()).iterator().next().getType().toString(), phpClassType);
+        for (String type : collection.iterator().next().getType().getTypes()) {
+            Collection<? extends PhpNamedElement> col = phpIndex.getBySignature(type, null, 0);
+            if (col.size() == 0) {
+                continue;
+            }
+
+            for (String classType : col.iterator().next().getType().getTypes()) {
+                types = types + classType + '|';
+                if (classType.equals(phpClassType)) {
+                    return;
+                }
             }
         }
+
+        fail("Can't find type: "+phpClassType+", found:"+types);
     }
 
     protected void assertPhpReferenceSignatureEquals(LanguageFileType languageFileType, @NotNull Class aClass, String configureByText, String typeSignature) {
@@ -112,7 +130,17 @@ abstract public class CodeInsightFixtureTestCase extends LightCodeInsightFixture
             fail("Element is not PhpReference.");
         }
 
-        assertEquals(typeSignature, ((PhpReference)psiElement).getSignature());
+        PhpIndex phpIndex = PhpIndex.getInstance(myFixture.getProject());
+        Collection<? extends PhpNamedElement> collection = phpIndex.getBySignature(((PhpReference)psiElement).getSignature(), null, 0);
+        assertNotEmpty(collection);
+
+        for (String type : collection.iterator().next().getType().getTypes()) {
+            if (type.equals(typeSignature)) {
+                return;
+            }
+        }
+
+        fail("Can't find type: "+typeSignature+", found:"+collection.iterator().next().getType().toString());
     }
 
     protected void assertSignatureEqualsType(String typeSignature, String phpClassType) {
