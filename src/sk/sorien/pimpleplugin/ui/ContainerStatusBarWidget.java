@@ -50,7 +50,9 @@ public class ContainerStatusBarWidget extends EditorBasedWidget implements com.i
 
     public void setText(String text) {
         this.text = text;
-        statusBar.updateWidget(this.ID());
+        if (statusBar != null) {
+            statusBar.updateWidget(this.ID());
+        }
     }
 
     @NotNull
