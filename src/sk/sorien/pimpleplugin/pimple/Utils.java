@@ -56,7 +56,7 @@ public class Utils {
 
         PhpIndex phpIndex = PhpIndex.getInstance(arrayAccessElement.getProject());
 
-        ArrayList<String> parameters = new ArrayList<>();
+        ArrayList<String> parameters = new ArrayList<String>();
         if (!findPimpleContainer(phpIndex, signature.base, parameters)) {
             return null;
         }
@@ -162,7 +162,7 @@ public class Utils {
         if (signatureElement instanceof Variable || signatureElement instanceof FieldReference) {
             signature.set(((PhpReference) signatureElement).getSignature());
 
-            ArrayList<String> parameters = new ArrayList<>();
+            ArrayList<String> parameters = new ArrayList<String>();
             if (!Utils.findPimpleContainer(phpIndex, signature.base, parameters)) {
                 return null;
             }

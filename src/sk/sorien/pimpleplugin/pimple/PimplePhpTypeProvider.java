@@ -217,7 +217,7 @@ public class PimplePhpTypeProvider implements PhpTypeProvider2 {
 
         // try to resolve service type
         if(ProjectComponent.isEnabled(project) && signature.hasParameter()) {
-            ArrayList<String> parameters = new ArrayList<>();
+            ArrayList<String> parameters = new ArrayList<String>();
             if (Utils.findPimpleContainer(phpIndex, expression, parameters)) {
                 return phpIndex.getClassesByFQN(getClassNameFromParameters(phpIndex, project, parameters));
             }
