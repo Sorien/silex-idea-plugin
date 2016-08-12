@@ -21,6 +21,7 @@ if [ ! -d ./plugins ]; then
 
     wget https://plugins.jetbrains.com/files/6610/27035/php-162.1121.34.zip
     unzip -qo php-162.1121.34.zip -d ./plugins
+    rm -rf php-162.1121.34.zip
 fi
 
 # Run the tests
