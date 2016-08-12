@@ -174,7 +174,7 @@
     <target name="test" depends="compile_test" description="Run the tests">
         <property name="suspend" value="n"/>
 
-        <junit haltonfailure="false" failureProperty="failure_found" fork="yes" forkmode="once" reloading="no">
+        <junit haltonfailure="false" failureProperty="failure_found" fork="yes" forkmode="once" reloading="no" showoutput="true">
             <jvmarg value="-Didea.home.path=${idea.build}"/>
             <jvmarg value="-Xbootclasspath/a:${idea.build}/lib/boot.jar"/>
             <jvmarg value="-Dfile.encoding=UTF-8"/>
